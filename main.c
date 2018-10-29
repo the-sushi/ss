@@ -5,13 +5,22 @@
 #include <errno.h>
 #include <signal.h>
 
+#ifdef linux
+	#include <linux/limits.h>
+#else
+	#include <sys/syslimits.h>
+#endif
+
 #include <editline/readline.h>
 
 #include "builtins.h"
 
 #define BUILTINS_NUM 7
-
 #define CMD_ITEM(NAME) {#NAME, &NAME##_builtin}
+#define FG_RED "\033[0;1;31m"
+#define CLR "\033[0m"
+#define BG_RED "\033[37;41m"
+#define BG_WHITE "\033[30;47m"
 
 
 /* ---------- VARIABLE DECLARATIONS ---------- */
@@ -95,6 +104,7 @@ int execute(char ** args)
 
 		/* execvp() should've replaced the process */
 		perror("Failed");
+		printf("\t(%s)\n", args[0]);
 		exit(1);
 	}
 	else
@@ -126,7 +136,11 @@ int lin_eval(char current[])
 
 	tmp = NULL;
 	args = split_cmd(current);
-	if (args[0] == NULL) return 0;
+	if (args[0] == NULL)
+	{
+		lin_ret = 0;
+		return 0;
+	}
 
 	/* Replace variables */
 	for (i = 0; i < argc; i++)
@@ -166,22 +180,28 @@ end:
 }
 
 
-int main()
+int main(int argc, char * argv[])
 {
 	char * line;
-	char prompt[1024];
-	char tmp[512];
-	const char endp[18] = " \033[0;1;31m > \033[0m";
+	char prompt[PATH_MAX + 128];
+	char tmp[PATH_MAX];
+	const char endp[] = " " FG_RED " > " CLR;
+
+	(void)argc;
 
 	signal(SIGINT, SIG_IGN);
 	using_history();
 
+	if (realpath(argv[0], tmp) == NULL) strcpy(tmp, "???");
+
+	setenv("SHELL", tmp, 1);
+
 	while (1)
 	{
-		if (lin_ret == 0)
-			strcpy(prompt, "\033[30;47m ");
+		if (!lin_ret)
+			strcpy(prompt, BG_WHITE " ");
 		else
-			strcpy(prompt, "\033[37;41m ");
+			strcpy(prompt, BG_RED " ");
 
 		getcwd(tmp, sizeof tmp);
 		strcat(prompt, tmp);

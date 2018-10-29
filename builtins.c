@@ -144,19 +144,19 @@ int help_builtin(unsigned short argc, char ** argv)
 			"cd - Change directory\n"
 			"\tUsage: cd [directory]\n"
 
-			"set - Set enviromental variable\n"
+			"\nset - Set enviromental variable\n"
 			"\tUsage: set [variable] [value]\n"
 
-			"echo - Echo arguments back\n"
+			"\necho - Echo arguments back\n"
 			"\tUsage: echo [text] <more text...>\n"
 
-			"pwd - Path of working directory\n"
+			"\npwd - Path of working directory\n"
 			"\tUsage: pwd\n"
 
-			"exit - Exits shell\n"
+			"\nexit - Exits shell\n"
 			"\tUsage: exit <error code>\n"
 
-			"help - Display this.  If there's one that you don't want to forget, it's this one\n"
+			"\nhelp - Display this.  If there's one that you don't want to forget, it's this one\n"
 			"\tUsage: help\n"
 		);
 
