@@ -1,8 +1,12 @@
+/* ----- INCLUDES ----- */
+/* libc */
 #include <string.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+
+/* OS/POSIX */
+#include <unistd.h>
 #include <signal.h>
 
 #ifdef linux
@@ -11,121 +15,29 @@
 	#include <sys/syslimits.h>
 #endif
 
+/* LIB */
 #include <editline/readline.h>
 
+/* Local */
 #include "builtins.h"
+#include "util.h"
+#include "builtin_table.h"
 
-#define BUILTINS_NUM 7
-#define CMD_ITEM(NAME) {#NAME, &NAME##_builtin}
+
+/* ----- ESCAPE SEQUENCES ----- */
 #define FG_RED "\033[0;1;31m"
 #define CLR "\033[0m"
 #define BG_RED "\033[37;41m"
 #define BG_WHITE "\033[30;47m"
 
 
-/* ---------- VARIABLE DECLARATIONS ---------- */
+/* ----- GLOBAL VARIABLE DECLARATIONS ----- */
 
 int lin_ret;
 unsigned short argc;
 
 
-/* ---------- COMMAND TABLE ---------- */
-
-struct builtin_func_s
-{
-	const char* cmd;
-	int (*func)(unsigned short argc, char ** argv);
-};
-
-struct builtin_func_s builtin_table[] =
-	{
-		CMD_ITEM(cd),
-		CMD_ITEM(set),
-		CMD_ITEM(echo),
-		CMD_ITEM(pwd),
-		CMD_ITEM(exit),
-		CMD_ITEM(exec),
-		CMD_ITEM(help)
-	};
-
-
-
-/* ---------- HELPER FUNCTIONS ---------- */
-
-char ** split_cmd(char * line)
-{
-	char ** args;
-	char * arg;
-
-	argc = 1;
-	args = malloc(argc * sizeof (char *));
-	if (args == NULL)
-	{
-		perror("malloc() failed");
-		exit(-1);
-	}
-
-	arg = strtok(line, " ");
-	args[argc - 1] = arg;
-
-	while (( arg = strtok(NULL, " ") ) != NULL)
-	{
-		argc++;
-		args = realloc(args, argc * sizeof (char *));
-		if (args == NULL)
-		{
-			perror("realloc() failed");
-			exit(-1);
-		}
-		args[argc - 1] = arg;
-	}
-
-	args = realloc(args, (argc + 1) * sizeof (char *));
-	args[argc] = NULL;
-
-	return args;
-}
-
-int execute(char ** args)
-{
-	pid_t pid;
-	int status;
-
-	pid = fork();
-	if (pid < 0)
-	{
-		perror("Fork failed");
-		return 1;
-	}
-	else if (pid == 0)
-	{
-		/* Child */
-		execvp(args[0], args);
-
-		/* execvp() should've replaced the process */
-		perror("Failed");
-		printf("\t(%s)\n", args[0]);
-		exit(1);
-	}
-	else
-	{
-		/* Parent */
-		do
-		{
-			waitpid(pid, &status, WUNTRACED | WCONTINUED);
-		}
-			while ( !WIFEXITED(status) && !WIFSIGNALED(status) );
-		
-		return WEXITSTATUS(status);
-	}
-	return 0;
-}
-
-
-
-
-/* ---------- MAIN CODE --------- */
-
+/* ----- MAIN CODE ---- */
 
 int lin_eval(char current[])
 {
@@ -136,6 +48,17 @@ int lin_eval(char current[])
 
 	tmp = NULL;
 	args = split_cmd(current);
+
+	if (args == NULL)
+	{
+		if (errno == 1)
+			fprintf(stderr, "Error: Quote incomplete\n");
+		else if (errno == 2)
+			fprintf(stderr, "Error: Quote mid-token\n");
+
+		lin_ret = 1;
+		return 1;
+	}
 	if (args[0] == NULL)
 	{
 		lin_ret = 0;

@@ -1,5 +1,5 @@
-typedef char * lstring;
 #define DECL_BUILTIN(NAME) int NAME##_builtin(unsigned short argc, char ** argv)
+
 DECL_BUILTIN(cd);
 DECL_BUILTIN(set);
 DECL_BUILTIN(echo);
