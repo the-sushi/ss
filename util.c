@@ -13,7 +13,6 @@ char * tok_next(char * str, char delim, char quote)
 	static char * ptr;
 	char *start, *end;
 	static unsigned char quote_on;
-	unsigned i, str_size;
 
 	if (str != NULL)
 	{
@@ -38,21 +37,21 @@ char * tok_next(char * str, char delim, char quote)
 			break;
 		}
 
-		if (*end == quote)
+		if ( *end == quote )
 		{
 			if (end == start)
 			{
+				start++;
+				end++;
 				quote_on = !quote_on;
 			}
-			else if (*(end - 1) != '\\')
+			else if
+				( *(end - 1) != '\\' &&
+					( *(end + 1) == delim || *(end + 1) == 0 )
+				)
 			{
-				if (*(end + 1) == delim || *(end + 1) == 0)
-					quote_on = !quote_on;
-				else
-				{
-					errno = 2;
-					return NULL;
-				}
+				*end = 0;
+				quote_on = !quote_on;
 			}
 		}
 
@@ -61,19 +60,6 @@ char * tok_next(char * str, char delim, char quote)
 			*end = 0;
 			ptr = ++end;
 			break;
-		}
-	}
-
-	str_size = strlen(start);
-	for (i = 0; i < str_size; i++)
-	{
-		if (start[i] == quote)
-		{
-			char * j;
-			for (j = (start + i); j < end; j++)
-			{
-				*j = *(j+1);
-			}
 		}
 	}
 

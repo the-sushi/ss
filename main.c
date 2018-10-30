@@ -53,9 +53,6 @@ int lin_eval(char current[])
 	{
 		if (errno == 1)
 			fprintf(stderr, "Error: Quote incomplete\n");
-		else if (errno == 2)
-			fprintf(stderr, "Error: Quote mid-token\n");
-
 		lin_ret = 1;
 		return 1;
 	}
