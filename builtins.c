@@ -103,11 +103,8 @@ int pwd_builtin(unsigned short argc, char ** argv)
 	}
 
 	buf = malloc(PATH_MAX);
-	if (buf == NULL)
-	{
-		perror("malloc() failed");
-		exit(-1);
-	}
+	if (buf == NULL) goto malloc_fail;
+
 	bufsize = PATH_MAX;
 
 	while(getcwd(buf, bufsize) == NULL)
@@ -116,11 +113,7 @@ int pwd_builtin(unsigned short argc, char ** argv)
 		{
 			bufsize += 128;
 			buf = realloc(buf, bufsize);
-			if (buf == NULL)
-			{
-				perror("realloc(failed)");
-				exit(-1);
-			}
+			if (buf == NULL) goto realloc_fail;
 		}
 		else
 		{
@@ -134,6 +127,13 @@ int pwd_builtin(unsigned short argc, char ** argv)
 
 	free(buf);
 	return 0;
+
+malloc_fail:
+	perror("malloc() failed");
+	return 1;
+realloc_fail:
+	perror("realloc() failed");
+	return 1;
 }
 
 int exit_builtin(unsigned short argc, char ** argv)
@@ -194,11 +194,7 @@ int routine_builtin(unsigned short argc, char ** argv)
 	if (routine_num == 0)
 	{
 		routines = malloc(sizeof (struct routine_s));
-		if (routines == NULL)
-		{
-			perror("malloc() failed");
-			exit(-1);
-		}
+		if (routines == NULL) goto malloc_fail;
 	}
 	else
 	{
@@ -211,11 +207,7 @@ int routine_builtin(unsigned short argc, char ** argv)
 			}
 		}
 		routines = realloc(routines, sizeof (struct routine_s) * (routine_num+1));
-		if (routines == NULL)
-		{
-			perror("realloc() failed");
-			exit(-1);
-		}
+		if (routines == NULL) goto realloc_fail;
 	}
 	routine_num++;
 
@@ -229,16 +221,20 @@ int routine_builtin(unsigned short argc, char ** argv)
 	while ( (line = readline("  routine> ")) && (strcmp(line, "end")) )
 	{
 		current->code_size++;
+
 		current->code = realloc(current->code, sizeof(char *) * current->code_size);
-		if (current->code == NULL)
-		{
-			perror("realloc() failed");
-			exit(-1);
-		}
+		if (current->code == NULL) goto realloc_fail;
+
 		current->code[current->code_size - 1] = line;
 	}
 
 	return 0;
+malloc_fail:
+	perror("malloc() failed");
+	return 1;
+realloc_fail:
+	perror("realloc() failed");
+	return 1;
 }
 
 int unroutine_builtin(unsigned short argc, char ** argv)
@@ -250,9 +246,9 @@ int unroutine_builtin(unsigned short argc, char ** argv)
 	{
 		fprintf(stderr,
 			"Usage:\n"
-			"~> routine [name]\n"
-			"  routine> [code]\n"
-			"  routine> end\n"
+			"\t~> routine [name]\n"
+			"\t  routine> [code]\n"
+			"\t  routine> end\n"
 		);
 		return 1;
 	}
@@ -342,9 +338,9 @@ int help_builtin(unsigned short argc, char ** argv)
 
 			"\nroutine - Creates a new routine\n"
 			"\tUsage:\n"
-			"~ > routine [name]\n"
-			"  routine > [code]\n"
-			"  routine > end\n"
+			"\t~ > routine [name]\n"
+			"\t  routine> [code]\n"
+			"\t  routine> end\n"
 
 			"\nunroutine - Deletes a routine\n"
 			"\tUsage: unroutine [name]\n"

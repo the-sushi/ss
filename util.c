@@ -83,12 +83,7 @@ char ** split_cmd(char * line)
 
 	argc++;
 	args = malloc(argc * sizeof (char *));
-
-	if (args == NULL)
-	{
-		perror("malloc() failed");
-		exit(-1);
-	}
+	if (args == NULL) goto malloc_fail;
 
 	arg = tok_next(line, ' ', '"');
 	args[argc - 1] = arg;
@@ -97,12 +92,7 @@ char ** split_cmd(char * line)
 	{
 		argc++;
 		args = realloc(args, argc * sizeof (char *));
-
-		if (args == NULL)
-		{
-			perror("realloc() failed");
-			exit(-1);
-		}
+		if (args == NULL) goto realloc_fail;
 
 		args[argc - 1] = arg;
 	}
@@ -114,14 +104,17 @@ char ** split_cmd(char * line)
 	}
 
 	args = realloc(args, (argc + 1) * sizeof (char *));
-	if (args == NULL)
-	{
-		perror("realloc() failed");
-		exit(-1);
-	}
-	args[argc] = NULL;
+	if (args == NULL) goto realloc_fail;
 
+	args[argc] = NULL;
 	return args;
+
+malloc_fail:
+	perror("malloc() failed");
+	return NULL;
+realloc_fail:
+	perror("realloc() failed");
+	return NULL;
 }
 
 int execute(char ** args)

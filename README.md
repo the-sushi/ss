@@ -7,6 +7,8 @@ A simple shell.
 ## Usage:
 
 ```
+ss: help:
+
 cd - Change directory
 		Usage: cd [directory]
 
@@ -24,9 +26,9 @@ exit - Exits shell
 
 routine - Creates a new routine
 		Usage:
-~ > routine [name]
-  routine > [code]
-  routine > end
+		~ > routine [name]
+		  routine> [code]
+		  routine> end
 
 unroutine - Deletes a routine
 		Usage: unroutine [name]
@@ -39,5 +41,5 @@ help - Display this.  If there's one command that you don't want to forget, it's
 
 ```
 $ ./build.sh
-$ install shell /path/to/your/bin
+$ install ss /path/to/your/bin
 ```
