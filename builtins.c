@@ -1,14 +1,43 @@
-#include "builtins.h"
-/*
-	cd, set, echo, pwd, exit, help
-*/
-
-#include <unistd.h>
+/* ----- Includes  ----- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
+
+/* Local */
+#include "builtins.h"
+#include "tables.h"
+
+/* OS/POSIX */
+#include <unistd.h>
+#include <signal.h>
+
+#ifdef linux
+#	include <linux/limits.h>
+#else
+#	include <sys/syslimits.h>
+#endif
+
+/* LIBRARY */
+#include <editline/readline.h>
+
+/* ----- DECLARATIONS ----- */
+struct builtin_func_s builtin_table[] =
+	{
+		CMD_ITEM(cd),
+		CMD_ITEM(set),
+		CMD_ITEM(echo),
+		CMD_ITEM(pwd),
+		CMD_ITEM(exit),
+		CMD_ITEM(exec),
+		CMD_ITEM(routine),
+		CMD_ITEM(unroutine),
+		CMD_ITEM(listroutines),
+		CMD_ITEM(help),
+	};
+
+/* ----- CODE ----- */
 
 int cd_builtin(unsigned short argc, char ** argv)
 {
@@ -73,15 +102,25 @@ int pwd_builtin(unsigned short argc, char ** argv)
 		return 1;
 	}
 
-	buf = malloc(1024);
-	bufsize = 1024;
+	buf = malloc(PATH_MAX);
+	if (buf == NULL)
+	{
+		perror("malloc() failed");
+		exit(-1);
+	}
+	bufsize = PATH_MAX;
 
-	while(getcwd(buf, sizeof buf) == NULL)
+	while(getcwd(buf, bufsize) == NULL)
 	{
 		if (errno == ERANGE)
 		{
-			bufsize += 1024;
+			bufsize += 128;
 			buf = realloc(buf, bufsize);
+			if (buf == NULL)
+			{
+				perror("realloc(failed)");
+				exit(-1);
+			}
 		}
 		else
 		{
@@ -90,6 +129,8 @@ int pwd_builtin(unsigned short argc, char ** argv)
 			return 1;
 		}
 	}
+
+	puts(buf);
 
 	free(buf);
 	return 0;
@@ -133,6 +174,149 @@ int exec_builtin(unsigned short argc, char ** argv)
 	return 1;
 }
 
+int routine_builtin(unsigned short argc, char ** argv)
+{
+	char * line;
+	struct routine_s * current;
+	unsigned i;
+
+	if (argc != 2)
+	{
+		fprintf(stderr,
+			"Usage:\n"
+			"  routine [name]\n"
+			"    code\n"
+			"    end\n"
+		);
+		return 1;
+	}
+
+	if (routine_num == 0)
+	{
+		routines = malloc(sizeof (struct routine_s));
+		if (routines == NULL)
+		{
+			perror("malloc() failed");
+			exit(-1);
+		}
+	}
+	else
+	{
+		for (i = 0; i < routine_num; i++)
+		{
+			if (! strcmp(routines[i].name, argv[1]))
+			{
+				fprintf(stderr, "Error: Routine exists\n");
+				return 1;
+			}
+		}
+		routines = realloc(routines, sizeof (struct routine_s) * (routine_num+1));
+		if (routines == NULL)
+		{
+			perror("realloc() failed");
+			exit(-1);
+		}
+	}
+	routine_num++;
+
+	current = &routines[routine_num - 1];
+
+	current->code = NULL; /* realloc(NULL, size) acts like malloc(size) */
+
+	current->name = strdup(argv[1]);
+	current->code_size = 0;
+
+	while ( (line = readline("  routine> ")) && (strcmp(line, "end")) )
+	{
+		current->code_size++;
+		current->code = realloc(current->code, sizeof(char *) * current->code_size);
+		if (current->code == NULL)
+		{
+			perror("realloc() failed");
+			exit(-1);
+		}
+		current->code[current->code_size - 1] = line;
+	}
+
+	return 0;
+}
+
+int unroutine_builtin(unsigned short argc, char ** argv)
+{
+	unsigned i;
+	struct routine_s * current;
+
+	if (argc != 2)
+	{
+		fprintf(stderr,
+			"Usage:\n"
+			"~> routine [name]\n"
+			"  routine> [code]\n"
+			"  routine> end\n"
+		);
+		return 1;
+	}
+
+	for (i = 0; i < routine_num; i++)
+	{
+		current = &routines[i];
+		if (!strcmp(current->name, argv[1]))
+		{
+			free(current->name);
+
+			for (current->code_size--; current->code_size > 0; current->code_size--)
+			{
+				free(current->code[routines[i].code_size]);
+			}
+
+			free(current->code);
+
+			/* Shift routines over */
+			for (; i < routine_num - 1; i++)
+				routines[i] = routines[i + 1];
+
+			if (--routine_num == 0)
+			{
+				free(routines);
+			}
+			else
+			{
+				routines = realloc(routines, sizeof(struct routine_s) * routine_num);
+	
+				if (routines == NULL)
+				{
+					fprintf(stderr, "Error: realloc failed");
+					return 1;
+				}
+			}
+
+			break;
+		}
+	}
+
+	return 0;
+}
+
+int listroutines_builtin(unsigned short argc, char ** argv)
+{
+	unsigned i;
+
+	(void)argv;
+
+	if (argc != 1)
+	{
+		fprintf(stderr, "Usage: listroutines\n");
+		return 1;
+	}
+
+	for (i = 0; i < routine_num; i++)
+	{
+		puts(routines[i].name);
+	}
+
+	return 0;
+}
+
 int help_builtin(unsigned short argc, char ** argv)
 {
 	(void)argc; (void)argv;
@@ -156,7 +340,16 @@ int help_builtin(unsigned short argc, char ** argv)
 			"\nexit - Exits shell\n"
 			"\tUsage: exit <error code>\n"
 
-			"\nhelp - Display this.  If there's one that you don't want to forget, it's this one\n"
+			"\nroutine - Creates a new routine\n"
+			"\tUsage:\n"
+			"~ > routine [name]\n"
+			"  routine > [code]\n"
+			"  routine > end\n"
+
+			"\nunroutine - Deletes a routine\n"
+			"\tUsage: unroutine [name]\n"
+
+			"\nhelp - Display this.  If there's one command that you don't want to forget, it's this one\n"
 			"\tUsage: help\n"
 		);
 

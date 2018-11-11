@@ -1,12 +1,18 @@
-extern int argc;
+/* ----- INCLUDES ----- */
 
+/* Standard library */
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 #include <errno.h>
+/* POSIX */
+#include <unistd.h>
 
-/* ---------- HELPER FUNCTIONS ---------- */
+/* ----- VARIABLE DECLARATIONS ----- */
+extern unsigned argc;
+
+
+/* ----- CODE ----- */
 
 char * tok_next(char * str, char delim, char quote)
 {
@@ -14,6 +20,7 @@ char * tok_next(char * str, char delim, char quote)
 	char *start, *end;
 	static unsigned char quote_on;
 
+	/* NULL - Continue with previous */
 	if (str != NULL)
 	{
 		quote_on = 0;
@@ -39,6 +46,7 @@ char * tok_next(char * str, char delim, char quote)
 
 		if ( *end == quote )
 		{
+			/* There can't be a backslash if there's nothing before us */
 			if (end == start)
 			{
 				start++;
@@ -46,8 +54,11 @@ char * tok_next(char * str, char delim, char quote)
 				quote_on = !quote_on;
 			}
 			else if
-				( *(end - 1) != '\\' &&
-					( *(end + 1) == delim || *(end + 1) == 0 )
+				(
+					/* Check for backslash, make sure we're at the end of a token */
+					(*(end - 1) != '\\')
+					&&
+					(*(end + 1) == delim || *(end + 1) == 0)
 				)
 			{
 				*end = 0;
@@ -62,7 +73,6 @@ char * tok_next(char * str, char delim, char quote)
 			break;
 		}
 	}
-
 	return start;
 }
 
@@ -71,8 +81,9 @@ char ** split_cmd(char * line)
 	char ** args;
 	char * arg;
 
-	argc = 1;
+	argc++;
 	args = malloc(argc * sizeof (char *));
+
 	if (args == NULL)
 	{
 		perror("malloc() failed");
@@ -86,18 +97,28 @@ char ** split_cmd(char * line)
 	{
 		argc++;
 		args = realloc(args, argc * sizeof (char *));
+
 		if (args == NULL)
 		{
 			perror("realloc() failed");
 			exit(-1);
 		}
+
 		args[argc - 1] = arg;
 	}
 
-	if (errno == 1) return NULL;
-	else if (errno == 2) return NULL;
+	if (errno != 0)
+	{
+		free(args);
+		return NULL;
+	}
 
 	args = realloc(args, (argc + 1) * sizeof (char *));
+	if (args == NULL)
+	{
+		perror("realloc() failed");
+		exit(-1);
+	}
 	args[argc] = NULL;
 
 	return args;
@@ -109,6 +130,7 @@ int execute(char ** args)
 	int status;
 
 	pid = fork();
+
 	if (pid < 0)
 	{
 		perror("Fork failed");
@@ -120,8 +142,7 @@ int execute(char ** args)
 		execvp(args[0], args);
 
 		/* execvp() should've replaced the process */
-		perror("Failed");
-		printf("\t(%s)\n", args[0]);
+		fprintf(stderr, "Failed: %s (%s)\n", strerror(errno), args[0]);
 		exit(1);
 	}
 	else
@@ -132,8 +153,8 @@ int execute(char ** args)
 			waitpid(pid, &status, WUNTRACED | WCONTINUED);
 		}
 			while ( !WIFEXITED(status) && !WIFSIGNALED(status) );
-		
+
+		/* putchar('\n'); */
 		return WEXITSTATUS(status);
 	}
-	return 0;
 }
