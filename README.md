@@ -2,6 +2,8 @@
 
 A simple shell.
 
+[![asciicast](https://asciinema.org/a/BvThSoa4Q7jW8ymcYkqoZ7vSb.svg)](https://asciinema.org/a/BvThSoa4Q7jW8ymcYkqoZ7vSb)
+
 ## Usage:
 
 ```
