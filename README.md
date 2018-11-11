@@ -43,3 +43,9 @@ help - Display this.  If there's one command that you don't want to forget, it's
 $ ./build.sh
 $ install ss /path/to/your/bin
 ```
+
+
+
+
+
+Inspired by [s](https://github.com/rain-1/s), rc, [es](https://github.com/wryun/es-shell), and the Suckless people
