@@ -8,6 +8,7 @@
 /* Local */
 #include "builtins.h"
 #include "tables.h"
+#include "util.h"
 
 /* OS/POSIX */
 #include <unistd.h>
@@ -163,7 +164,8 @@ int exit_builtin(unsigned short argc, char ** argv)
 		}
 	}
 
-	exit( atoi(argv[1]) );
+	exit_flag = 1;
+	return atoi(argv[1]);
 }
 
 int exec_builtin(unsigned short argc, char ** argv)

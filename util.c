@@ -11,7 +11,6 @@
 /* ----- VARIABLE DECLARATIONS ----- */
 extern unsigned argc;
 
-
 /* ----- CODE ----- */
 
 char * tok_next(char * str, char delim, char quote)

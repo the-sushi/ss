@@ -35,7 +35,6 @@ int ret_num;
 unsigned argc;
 extern struct builtin_func_s builtin_table[];
 
-
 /* ----- FUNCION DECLARATIONS ----- */
 int mk_routine(char * current[]);
 int line_eval(char current[]);
@@ -50,7 +49,6 @@ int main(int argc, char * argv[])
 	char prompt[PATH_MAX + 32];
 	char tmp[PATH_MAX];
 	unsigned i;
-	unsigned j;
 
 	(void)argc; /* Shut up the compiler */
 
@@ -61,7 +59,7 @@ int main(int argc, char * argv[])
 
 	setenv("SHELL", tmp, 1);
 
-	while (1)
+	while (exit_flag == 0)
 	{
 		if (ret_num)
 			strcpy(prompt, BG_RED " ");
@@ -83,9 +81,9 @@ int main(int argc, char * argv[])
 	{
 		free(routines[i].name);
 
-		for (j = 0; j < routines[i].code_size; j++)
+		for (routines[i].code_size--; routines[i].code_size > 0; routines[i].code_size--)
 		{
-			free(routines[i].code[j]);
+			free(routines[i].code[routines[i].code_size]);
 		}
 
 		free(routines[i].code);
