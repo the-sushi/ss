@@ -1,6 +1,7 @@
 # Simple shell
 
 A simple shell.
+![Coverity](https://scan.coverity.com/projects/17208/badge.svg)
 
 [![asciicast](https://asciinema.org/a/BvThSoa4Q7jW8ymcYkqoZ7vSb.svg)](https://asciinema.org/a/BvThSoa4Q7jW8ymcYkqoZ7vSb)
 
