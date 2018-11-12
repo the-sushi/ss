@@ -1,3 +1,5 @@
 a.out
 *.dSYM
 ss
+cov-int/
+cov.gz
