@@ -81,9 +81,9 @@ int main(int argc, char * argv[])
 	{
 		free(routines[i].name);
 
-		for (routines[i].code_size--; routines[i].code_size > 0; routines[i].code_size--)
+		for (; routines[i].code_size == 0; routines[i].code_size--)
 		{
-			free(routines[i].code[routines[i].code_size]);
+			free(routines[i].code[routines[i].code_size - 1]);
 		}
 
 		free(routines[i].code);

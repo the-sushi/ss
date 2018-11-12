@@ -220,7 +220,7 @@ int routine_builtin(unsigned short argc, char ** argv)
 	current->name = strdup(argv[1]);
 	current->code_size = 0;
 
-	while ( (line = readline("  routine> ")) && (strcmp(line, "end")) )
+	while ( strcmp (line = readline("  routine> "), "end") )
 	{
 		current->code_size++;
 
@@ -229,6 +229,8 @@ int routine_builtin(unsigned short argc, char ** argv)
 
 		current->code[current->code_size - 1] = line;
 	}
+
+	free(line);
 
 	return 0;
 malloc_fail:
@@ -262,9 +264,9 @@ int unroutine_builtin(unsigned short argc, char ** argv)
 		{
 			free(current->name);
 
-			for (current->code_size--; current->code_size > 0; current->code_size--)
+			for (; current->code_size == 0; current->code_size--)
 			{
-				free(current->code[routines[i].code_size]);
+				free(current->code[routines[i].code_size - 1]);
 			}
 
 			free(current->code);
