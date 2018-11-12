@@ -10,6 +10,8 @@
 /* POSIX */
 #include <unistd.h>
 
+#include "tables.h"
+
 /* ----- VARIABLE DECLARATIONS ----- */
 extern unsigned argc;
 
@@ -156,4 +158,16 @@ int execute(char ** args)
 		/* putchar('\n'); */
 		return WEXITSTATUS(status);
 	}
+}
+
+void routine_clear (struct routine_s * routine)
+{
+	free(routines->name);
+
+	for (; routine->code_size == 0; routines->code_size--)
+	{
+		free(routines->code[routines->code_size - 1]);
+	}
+
+	free(routines->code);
 }

@@ -270,14 +270,7 @@ int unroutine_builtin(unsigned short argc, char ** argv)
 		current = &routines[i];
 		if (!strcmp(current->name, argv[1]))
 		{
-			free(current->name);
-
-			for (; current->code_size == 0; current->code_size--)
-			{
-				free(current->code[routines[i].code_size - 1]);
-			}
-
-			free(current->code);
+			routine_clear(current);
 
 			/* Shift routines over */
 			for (; i < routine_num - 1; i++)
