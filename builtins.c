@@ -93,6 +93,7 @@ int echo_builtin(unsigned short argc, char ** argv)
 int pwd_builtin(unsigned short argc, char ** argv)
 {
 	char * buf;
+	void * tmp;
 	unsigned int bufsize;
 
 	(void)argv; /* shut up the compiler */
@@ -113,8 +114,9 @@ int pwd_builtin(unsigned short argc, char ** argv)
 		if (errno == ERANGE)
 		{
 			bufsize += 128;
-			buf = realloc(buf, bufsize);
-			if (buf == NULL) goto realloc_fail;
+			tmp = realloc(buf, bufsize);
+			if (tmp == NULL) goto realloc_fail;
+			buf = tmp;
 		}
 		else
 		{
@@ -179,6 +181,7 @@ int exec_builtin(unsigned short argc, char ** argv)
 int routine_builtin(unsigned short argc, char ** argv)
 {
 	char * line;
+	void * tmp;
 	struct routine_s * current;
 	unsigned i;
 
@@ -208,8 +211,9 @@ int routine_builtin(unsigned short argc, char ** argv)
 				return 1;
 			}
 		}
-		routines = realloc(routines, sizeof (struct routine_s) * (routine_num+1));
-		if (routines == NULL) goto realloc_fail;
+		tmp = realloc(routines, sizeof (struct routine_s) * (routine_num+1));
+		if (tmp == NULL) goto realloc_fail;
+		routines = tmp;
 	}
 	routine_num++;
 
@@ -218,9 +222,10 @@ int routine_builtin(unsigned short argc, char ** argv)
 	current->code = NULL; /* realloc(NULL, size) acts like malloc(size) */
 
 	current->name = strdup(argv[1]);
+	if (current->name == NULL) goto malloc_fail;
 	current->code_size = 0;
 
-	while ( strcmp (line = readline("  routine> "), "end") )
+	while ( (line = readline("  routine> ")) && strcmp(line, "end") )
 	{
 		current->code_size++;
 
@@ -235,9 +240,11 @@ int routine_builtin(unsigned short argc, char ** argv)
 	return 0;
 malloc_fail:
 	perror("malloc() failed");
+	exit_flag = 1;
 	return 1;
 realloc_fail:
 	perror("realloc() failed");
+	exit_flag = 1;
 	return 1;
 }
 
@@ -245,6 +252,7 @@ int unroutine_builtin(unsigned short argc, char ** argv)
 {
 	unsigned i;
 	struct routine_s * current;
+	void * tmp;
 
 	if (argc != 2)
 	{
@@ -281,13 +289,16 @@ int unroutine_builtin(unsigned short argc, char ** argv)
 			}
 			else
 			{
-				routines = realloc(routines, sizeof(struct routine_s) * routine_num);
+				tmp = realloc(routines, sizeof(struct routine_s) * routine_num);
 	
-				if (routines == NULL)
+				if (tmp == NULL)
 				{
 					fprintf(stderr, "Error: realloc failed");
+					exit_flag = 1;
 					return 1;
 				}
+
+				routines = tmp;
 			}
 
 			break;

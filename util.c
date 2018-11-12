@@ -1,4 +1,6 @@
 /* ----- INCLUDES ----- */
+/* Self */
+#include "util.h"
 
 /* Standard library */
 #include <stdlib.h>
@@ -79,6 +81,7 @@ char ** split_cmd(char * line)
 {
 	char ** args;
 	char * arg;
+	void * tmp;
 
 	argc++;
 	args = malloc(argc * sizeof (char *));
@@ -90,8 +93,9 @@ char ** split_cmd(char * line)
 	while (( arg = tok_next(NULL, ' ', '"') ) != NULL)
 	{
 		argc++;
-		args = realloc(args, argc * sizeof (char *));
-		if (args == NULL) goto realloc_fail;
+		tmp = realloc(args, argc * sizeof (char *));
+		if (tmp == NULL) goto realloc_fail;
+		args = tmp;
 
 		args[argc - 1] = arg;
 	}
@@ -102,17 +106,20 @@ char ** split_cmd(char * line)
 		return NULL;
 	}
 
-	args = realloc(args, (argc + 1) * sizeof (char *));
-	if (args == NULL) goto realloc_fail;
+	tmp = realloc(args, (argc + 1) * sizeof (char *));
+	if (tmp == NULL) goto realloc_fail;
+	args = tmp;
 
 	args[argc] = NULL;
 	return args;
 
 malloc_fail:
 	perror("malloc() failed");
+	exit_flag = 1;
 	return NULL;
 realloc_fail:
 	perror("realloc() failed");
+	exit_flag = 1;
 	return NULL;
 }
 
