@@ -46,18 +46,26 @@ int main(int argc, char * argv[]);
 int main(int argc, char * argv[])
 {
 	char * line;
-	char prompt[PATH_MAX + 32];
-	char tmp[PATH_MAX];
+	char * prompt;
+	char * path;
 	unsigned i;
+	unsigned path_size;
 
 	(void)argc; /* Shut up the compiler */
 
 	signal(SIGINT, SIG_IGN);
 	using_history();
 
-	if (realpath(argv[0], tmp) == NULL) strcpy(tmp, "???");
+	if ((path = realpath(argv[0], NULL)) == NULL)
+	{
+		path = "????";
+	}
 
-	setenv("SHELL", tmp, 1);
+	path_size = strlen(path) + 1;
+
+	prompt = malloc(path_size + 32);
+
+	setenv("SHELL", path, 1);
 
 	while (exit_flag == 0)
 	{
@@ -66,8 +74,8 @@ int main(int argc, char * argv[])
 		else
 			strcpy(prompt, BG_WHITE " ");
 
-		getcwd(tmp, sizeof tmp);
-		strcat(prompt, tmp);
+		getcwd(path, path_size);
+		strcat(prompt, path);
 		strcat(prompt, PROMPT_END);
 
 		line = readline(prompt);
@@ -83,6 +91,8 @@ int main(int argc, char * argv[])
 	}
 
 	free(routines);
+	free(path);
+	free(prompt);
 
 	return 0;
 }
