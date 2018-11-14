@@ -110,6 +110,7 @@ int line_eval(char current[])
 
 	if (args[0] == NULL)
 	{
+		free(args);
 		ret_num = 0;
 		return 0;
 	}
@@ -119,8 +120,10 @@ int line_eval(char current[])
 		if (!strcmp(routines[i].name, args[0]))
 		{
 			for (j = 0; j < routines[i].code_size; j++)
+			{
 				line_eval(routines[i].code[j]);
-			return 0;
+			}
+			goto end;
 		}
 	}
 
