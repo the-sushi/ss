@@ -50,6 +50,7 @@ int main(int argc, char * argv[])
 	char * path;
 	unsigned i;
 	unsigned path_size;
+	unsigned path_dynamic;
 
 	(void)argc; /* Shut up the compiler */
 
@@ -59,7 +60,9 @@ int main(int argc, char * argv[])
 	if ((path = realpath(argv[0], NULL)) == NULL)
 	{
 		path = "????";
+		path_dynamic = 0;
 	}
+	else path_dynamic = 1;
 
 	path_size = strlen(path) + 1;
 
@@ -91,7 +94,7 @@ int main(int argc, char * argv[])
 	}
 
 	free(routines);
-	free(path);
+	if (path_dynamic == 1) free(path);
 	free(prompt);
 
 	return 0;
