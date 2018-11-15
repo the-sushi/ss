@@ -1,0 +1,82 @@
+.TH ss 1 2018-11-8 "ss, version WIP0" "SS(1)"
+
+.SH NAME
+ss \- Simple Shell
+
+.SH DESCRIPTION
+.BR ss ", or " "Simple Shell" ", is a minimal command interpreter for UNIX-like systems. It is"
+.I not
+.BR sh "-compatible, nor does it aim to be."
+
+.SS "LIST OF BUILTINS"
+.B ss, cd, set, echo, pwd, exit, exec, routine, unroutine, listroutines, help
+
+
+.SS "BUILTIN USAGE"
+
+.IP cd
+Change directory
+
+Usage:
+.B cd
+[directory]
+
+.IP set
+Set enviromental variable
+
+Usage:
+.B set
+[variable] [value]
+
+.IP echo
+Echo arguments back
+
+Usage:
+.B echo
+[text] <more text...>
+
+.IP pwd
+Path of working directory
+
+Usage:
+.B pwd
+
+.IP exit
+Exits shell
+
+Usage:
+.B exit
+<error code>
+
+.IP routine
+Creates a new routine
+
+Usage:
+
+.B > routine
+[name]
+
+.B "	routine>"
+[code]
+
+.B "	routine>"
+end
+
+.IP unroutine
+Deletes a routine
+
+Usage:
+.B unroutine
+[name]
+
+.IP help
+Display this help page.  If there's one command that you don't want to forget, it's this one
+
+Usage:
+.B help
+
+.SH "SEE ALSO"
+sh(1), s(1), execline(1), rc(1), ec(1)
+
+.SH NOTES
+Is currently under development and is a WIP, not featureful enough for normal usage
