@@ -11,7 +11,7 @@ A simple shell.
 ## Usage:
 
 ```
-ss: help:
+ss - help:
 
 cd - Change directory
 		Usage: cd [directory]
