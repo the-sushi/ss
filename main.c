@@ -63,7 +63,7 @@ int main(int argc, char * argv[])
 	else
 	{
 		fprintf(stderr, "Error: Failed to get shell path");
-		shell_path = "????";
+		setenv("SHELL", "????", 1);
 	}
 
 	if (getwd(path) != NULL)
