@@ -41,7 +41,7 @@ help - Display this.  If there's one command that you don't want to forget, it's
 		Usage: help
 ```
 
-See ss(1) for more (or not).
+See **ss(1)** for more (or not).
 
 ## How to build
 
@@ -55,6 +55,7 @@ $ ./build.sh install
 ```
 $ ./build.sh uninstall
 ```
+
 
 
 Inspired by [s](https://github.com/rain-1/s), rc, [es](https://github.com/wryun/es-shell), and the Suckless people
