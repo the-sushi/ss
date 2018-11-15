@@ -58,4 +58,4 @@ $ ./build.sh uninstall
 
 ## Other info
 
-Inspired by [s](https://github.com/rain-1/s), rc, [es](https://github.com/wryun/es-shell), and the Suckless people
+Inspired by [s](https://github.com/rain-1/s), [rc](http://doc.cat-v.org/plan_9/4th_edition/papers/rc), [es](https://github.com/wryun/es-shell), and the Suckless people
