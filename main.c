@@ -55,27 +55,31 @@ int main(int argc, char * argv[])
 	signal(SIGINT, SIG_IGN);
 	using_history();
 
-	if ((shell_path = realpath(argv[0], NULL)) == NULL)
+	if ((shell_path = realpath(argv[0], NULL)) != NULL)
 	{
+		setenv("SHELL", shell_path, 1);
+		free(shell_path);
+	}
+	else
+	{
+		fprintf(stderr, "Error: Failed to get shell path");
 		shell_path = "????";
 	}
 
 	if (getwd(path) != NULL)
 	{
-		setenv("SHELL", path, 1);
+		setenv("PWD", path, 1);
 	}
 	else
 	{
 		fprintf(stderr, "Error: Failed to get current directory!\n");
-		setenv("SHELL", "????", 1);
+		setenv("PWD", "????", 1);
 	}
 
 	while (exit_flag == 0)
 	{
-		if (ret_num)
-			strcpy(prompt, BG_RED " ");
-		else
-			strcpy(prompt, BG_WHITE " ");
+		if (ret_num) strcpy(prompt, BG_RED " ");
+		else         strcpy(prompt, BG_WHITE " ");
 
 		strcat(prompt, path);
 		strcat(prompt, PROMPT_END);
@@ -93,7 +97,6 @@ int main(int argc, char * argv[])
 	}
 
 	free(routines);
-	free(shell_path);
 
 	return 0;
 }
