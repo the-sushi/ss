@@ -53,6 +53,19 @@ int cd_builtin(unsigned short argc, char ** argv)
 		perror("Failed to change directory");
 		return 1;
 	}
+
+	setenv("OWD", path, 1);
+
+	if (getwd(path) != NULL)
+	{
+		setenv("PWD", path, 1);
+	}
+	else
+	{
+		perror("Failed to set $PWD:");
+		setenv("SHELL", "????", 1);
+	}
+
 	return 0;
 }
 

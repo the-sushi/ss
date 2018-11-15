@@ -46,29 +46,29 @@ int main(int argc, char * argv[]);
 int main(int argc, char * argv[])
 {
 	char * line;
-	char * prompt;
-	char * path;
+	char prompt[PATH_MAX + 32];
+	char * shell_path;
 	unsigned i;
-	unsigned path_size;
-	unsigned path_dynamic;
 
 	(void)argc; /* Shut up the compiler */
 
 	signal(SIGINT, SIG_IGN);
 	using_history();
 
-	if ((path = realpath(argv[0], NULL)) == NULL)
+	if ((shell_path = realpath(argv[0], NULL)) == NULL)
 	{
-		path = "????";
-		path_dynamic = 0;
+		shell_path = "????";
 	}
-	else path_dynamic = 1;
 
-	path_size = strlen(path) + 1;
-
-	prompt = malloc(path_size + 32);
-
-	setenv("SHELL", path, 1);
+	if (getwd(path) != NULL)
+	{
+		setenv("SHELL", path, 1);
+	}
+	else
+	{
+		fprintf(stderr, "Error: Failed to get current directory!\n");
+		setenv("SHELL", "????", 1);
+	}
 
 	while (exit_flag == 0)
 	{
@@ -77,7 +77,6 @@ int main(int argc, char * argv[])
 		else
 			strcpy(prompt, BG_WHITE " ");
 
-		getcwd(path, path_size);
 		strcat(prompt, path);
 		strcat(prompt, PROMPT_END);
 
@@ -94,8 +93,7 @@ int main(int argc, char * argv[])
 	}
 
 	free(routines);
-	if (path_dynamic == 1) free(path);
-	free(prompt);
+	free(shell_path);
 
 	return 0;
 }
