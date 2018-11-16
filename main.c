@@ -98,7 +98,7 @@ int main(int argc, char * argv[])
 
 	free(routines);
 
-	return 0;
+	return ret_num;
 }
 
 int line_eval(char current[])

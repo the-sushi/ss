@@ -3,3 +3,4 @@ a.out
 *.dSYM
 ss
 cov*
+infer-out
