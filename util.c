@@ -52,9 +52,10 @@ char * tok_next(char * str, char delim, char quote)
 			{
 				start++;
 			}
-			if ( *(loc + 2) == delim || *(loc + 2) == 0 )
+			/* Swap quote at end of token */
+			if ( *(loc + 1) == '"' && (*(loc + 2) == delim || *(loc + 2) == 0))
 			{
-				*loc = *(loc + 1);
+				*loc = '"';
 				*(loc + 1) = *(loc + 2);
 			}
 			loc++;
