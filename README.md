@@ -92,7 +92,7 @@ DESCRIPTION
 
 
 SEE ALSO
-       sh(1), s(1), execline(1), rc(1), ec(1)
+       sh(1), s(1), execline(1), rc(1), es(1)
 
 
 NOTES
