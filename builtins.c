@@ -379,6 +379,8 @@ int help_builtin(unsigned short argc, char ** argv)
 
 			"\nhelp - Display this.  If there's one command that you don't want to forget, it's this one\n"
 			"\tUsage: help\n"
+
+			"\n\nSee ss(1) for more info. [man ss]"
 		);
 
 	return 0;
