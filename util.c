@@ -1,16 +1,10 @@
 /* ----- INCLUDES ----- */
-/* Self */
-#include "util.h"
 
 /* Standard library */
 #include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-/* POSIX */
-#include <unistd.h>
 
-#include "tables.h"
+/* Local */
+#include "globals.h"
 
 /* ----- VARIABLE DECLARATIONS ----- */
 extern unsigned argc;

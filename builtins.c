@@ -1,24 +1,12 @@
 /* ----- Includes  ----- */
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <string.h>
+/* Standard library */
 #include <ctype.h>
 
 /* Local */
-#include "builtins.h"
-#include "tables.h"
-#include "util.h"
+#include "globals.h"
 
 /* OS/POSIX */
-#include <unistd.h>
 #include <signal.h>
-
-#ifdef linux
-#	include <linux/limits.h>
-#else
-#	include <sys/syslimits.h>
-#endif
 
 /* LIBRARY */
 #include <editline/readline.h>

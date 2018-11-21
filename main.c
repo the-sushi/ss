@@ -1,25 +1,15 @@
 /* ----- INCLUDES ----- */
 /* libc */
-#include <string.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
-/* OS/POSIX */
-#include <unistd.h>
-#include <signal.h>
 
-#ifdef linux
-#	include <linux/limits.h>
-#else
-#	include <sys/syslimits.h>
-#endif
+/* OS/POSIX */
+#include <signal.h>
 
 /* LIB */
 #include <editline/readline.h>
+
 /* Local */
-#include "util.h"
-#include "builtins.h"
-#include "tables.h"
+#include "globals.h"
 
 
 /* ----- PROMPT VALUES ----- */
