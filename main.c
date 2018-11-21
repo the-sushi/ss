@@ -93,13 +93,15 @@ int line_eval(char current[], unsigned short routine_argc, char ** routine_args)
 	unsigned i, j;
 	const char *cmd;
 	char ** args;
-	char * var_tmp;
+	char ** var_tmp;
+	unsigned var_tmp_num;
 	char * routine_tmp;
 	unsigned argc;
 
-	args = NULL;
-	var_tmp = NULL;
+	args        = NULL;
 	routine_tmp = NULL;
+	var_tmp     = NULL;
+	var_tmp_num = 0;
 
 	argc = split_cmd(&args, current);
 
@@ -130,13 +132,27 @@ int line_eval(char current[], unsigned short routine_argc, char ** routine_args)
 				switch (args[i][1])
 				{
 					case '?':
-						asprintf(&var_tmp, "%d", ret_num);
-						args[i] = var_tmp;
+						var_tmp_num++;
+						var_tmp = realloc(var_tmp, var_tmp_num * sizeof (char *));
+						if (var_tmp == NULL) goto alloc_fail;
+
+						asprintf(&var_tmp[var_tmp_num - 1], "%d", ret_num);
+						if (var_tmp[var_tmp_num - 1] == NULL) goto alloc_fail;
+						
+						args[i] = var_tmp[var_tmp_num - 1];
+
 						goto end_if;
 
 					case '#':
-						asprintf(&var_tmp, "%d", routine_argc);
-						args[i] = var_tmp;
+						var_tmp_num++;
+						var_tmp = realloc(var_tmp, var_tmp_num * sizeof (char *));
+						if (var_tmp == NULL) goto alloc_fail;
+
+						asprintf(&var_tmp[var_tmp_num - 1], "%d", routine_argc);
+						if (var_tmp[var_tmp_num - 1] == NULL) goto alloc_fail;
+
+						args[i] = var_tmp[var_tmp_num - 1];
+
 						goto end_if;
 				}
 
@@ -156,6 +172,12 @@ int line_eval(char current[], unsigned short routine_argc, char ** routine_args)
 			args[i] = getenv(args[i] + 1);
 
 end_if:		;
+		}
+		else if (args[i][1] == '\\')
+		{
+			var_tmp_num++;
+			var_tmp = realloc(var_tmp, var_tmp_num * sizeof (char *));
+			var_tmp[var_tmp_num - 1] = strdup(args[i] + 1);
 		}
 	}
 
@@ -195,7 +217,17 @@ end_if:		;
 	ret_num = execute(args);
 
 end:
-	free(var_tmp);
+	if (var_tmp != NULL)
+	{
+		for (var_tmp_num--; var_tmp_num != 0; var_tmp_num--) free(var_tmp[var_tmp_num]);
+		free(var_tmp);
+	}
+
 	free(args);
 	return 0;
+
+alloc_fail:
+	perror("Failed to reallocate string");
+	free(args);
+	exit(1);
 }
