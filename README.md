@@ -104,8 +104,6 @@ NOTES
 ss, version WIP0                   2018-11-8                             ss(1)
 ```
 
-See **ss(1)** for more (or not).
-
 ## How to build
 
 ```
