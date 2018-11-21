@@ -14,7 +14,7 @@ Use GitHub's issue reporting feature with the feature addition template.  Do not
 After some point in time, feature requests stop being accepted.  See the code style section.
 
 ## Code style violation or suggestion?
-Use GitHub's issue reporting feature with no template.  DO not email me for this (even if you don't have an account).
+Use GitHub's issue reporting feature with no template.  Do not email me for this (even if you don't have an account).
 
 ## Code style:
 Anything that should be accessible globally goes in `globals.h`, this may be hard to work with in larger projects, but for small ones like this it works great.
