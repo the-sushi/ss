@@ -14,7 +14,7 @@ extern unsigned argc;
 char * tok_next(char * str, char delim, char quote)
 {
 	static char * ptr;
-	char *start, *end;
+	char *start, *loc;
 	static unsigned char quote_on;
 
 	/* NULL - Continue with previous */
@@ -26,47 +26,64 @@ char * tok_next(char * str, char delim, char quote)
 
 	if (ptr == NULL)
 	{
-		if (quote_on != 0)
-			errno = 1;
-		else
-			errno = 0;
+		if (quote_on != 0) errno = 1;
+		else errno = 0;
+
 		return NULL;
 	}
 
-	for (start = ptr, end = ptr; /* nothing */; end++)
+	while (*ptr == delim) ptr++;
+
+	for
+		(
+			start = ptr, loc = ptr ;
+			/* nothing */ ;
+			 loc++
+		)
 	{
-		if (*end == 0)
+		if (*loc == 0)
 		{
 			ptr = NULL;
 			break;
 		}
-
-		if ( *end == quote )
+		else if (*loc == '\\')
 		{
-			/* There can't be a backslash if there's nothing before us */
-			if (end == start)
+			if (loc == start)
 			{
 				start++;
-				end++;
+			}
+			if ( *(loc + 2) == delim || *(loc + 2) == 0 )
+			{
+				*loc = *(loc + 1);
+				*(loc + 1) = *(loc + 2);
+			}
+			loc++;
+		}
+		else if ( *loc == quote )
+		{
+			/* There can't be a backslash if there's nothing before us */
+			if (loc == start)
+			{
+				start++;
+				loc++;
 				quote_on = !quote_on;
 			}
 			else if
 				(
-					/* Check for backslash, make sure we're at the end of a token */
-					(*(end - 1) != '\\')
-					&&
-					(*(end + 1) == delim || *(end + 1) == 0)
+					/* make sure we're at the end of a token */
+					*(loc + 1) == delim ||
+					*(loc + 1) == 0
 				)
 			{
-				*end = 0;
+				*loc = 0;
 				quote_on = !quote_on;
 			}
 		}
 
-		if (*end == delim && quote_on == 0)
+		if (*loc == delim && quote_on == 0)
 		{
-			*end = 0;
-			ptr = ++end;
+			*loc = 0;
+			ptr = ++loc;
 			break;
 		}
 	}
@@ -80,6 +97,7 @@ unsigned split_cmd(char *** args, char * line)
 	unsigned argc;
 
 	argc = 1;
+
 	*args = malloc(argc * sizeof (char *));
 	if (*args == NULL) goto malloc_fail;
 
@@ -89,6 +107,7 @@ unsigned split_cmd(char *** args, char * line)
 	while (( arg = tok_next(NULL, ' ', '"') ) != NULL)
 	{
 		argc++;
+
 		tmp = realloc(*args, argc * sizeof (char *));
 		if (tmp == NULL) goto realloc_fail;
 		*args = tmp;
