@@ -56,6 +56,30 @@ $ ./build.sh install
 $ ./build.sh uninstall
 ```
 
+## Future features:
+
+- [x] Usable on a basic level
+- [x] Variables
+- [x] Set `$SHELL`
+- [x] `$?`, `$PWD`, `$OWD`
+- [ ] `~` in prompt
+- [ ] Escape char `\`
+- [x] Basic routines
+- [x] Routine arguments (`$#`, `$1`, `$2`...)
+- [ ] Pipes
+- [ ] Redirect to file
+- [ ] if/else
+- [ ] Loops
+- [ ] Beat `s`'s level of functionality
+- [ ] Usable for every-day usage
+
+## Possible future features:
+- Globbing
+- Switch to linenoise or something similar
+- `<`
+- Arrays
+- Lisp-style command nesting (`echo (echo hi)`)
+
 ## Other info
 
 Inspired by [s](https://github.com/rain-1/s), [rc](http://doc.cat-v.org/plan_9/4th_edition/papers/rc), [es](https://github.com/wryun/es-shell), and the Suckless people

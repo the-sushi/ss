@@ -39,7 +39,7 @@ char * tok_next(char * str, char delim, char quote)
 		return NULL;
 	}
 
-	for (start = ptr, end = ptr; ; end++)
+	for (start = ptr, end = ptr; /* nothing */; end++)
 	{
 		if (*end == 0)
 		{
@@ -79,50 +79,50 @@ char * tok_next(char * str, char delim, char quote)
 	return start;
 }
 
-char ** split_cmd(char * line)
+unsigned split_cmd(char *** args, char * line)
 {
-	char ** args;
 	char * arg;
 	void * tmp;
+	unsigned argc;
 
-	argc++;
-	args = malloc(argc * sizeof (char *));
-	if (args == NULL) goto malloc_fail;
+	argc = 1;
+	*args = malloc(argc * sizeof (char *));
+	if (*args == NULL) goto malloc_fail;
 
 	arg = tok_next(line, ' ', '"');
-	args[argc - 1] = arg;
+	(*args)[argc - 1] = arg;
 
 	while (( arg = tok_next(NULL, ' ', '"') ) != NULL)
 	{
 		argc++;
-		tmp = realloc(args, argc * sizeof (char *));
+		tmp = realloc(*args, argc * sizeof (char *));
 		if (tmp == NULL) goto realloc_fail;
-		args = tmp;
+		*args = tmp;
 
-		args[argc - 1] = arg;
+		(*args)[argc - 1] = arg;
 	}
 
 	if (errno != 0)
 	{
-		free(args);
-		return NULL;
+		free(*args);
+		return 0;
 	}
 
-	tmp = realloc(args, (argc + 1) * sizeof (char *));
+	tmp = realloc(*args, (argc + 1) * sizeof (char *));
 	if (tmp == NULL) goto realloc_fail;
-	args = tmp;
+	*args = tmp;
 
-	args[argc] = NULL;
-	return args;
+	(*args)[argc] = NULL;
+	return argc;
 
 malloc_fail:
 	perror("malloc() failed");
 	exit_flag = 1;
-	return NULL;
+	return 0;
 realloc_fail:
 	perror("realloc() failed");
 	exit_flag = 1;
-	return NULL;
+	return 0;
 }
 
 int execute(char ** args)

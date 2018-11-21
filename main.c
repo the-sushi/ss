@@ -32,12 +32,11 @@
 /* ----- VARIBALE DECLARATIONS ----- */
 
 int ret_num;
-unsigned argc;
 extern struct builtin_func_s builtin_table[];
 
 /* ----- FUNCION DECLARATIONS ----- */
 int mk_routine(char * current[]);
-int line_eval(char current[]);
+int line_eval(char current[], unsigned short routine_argc, char * routine_args[]);
 int main(int argc, char * argv[]);
 
 
@@ -49,8 +48,6 @@ int main(int argc, char * argv[])
 	char prompt[PATH_MAX + 32];
 	char * shell_path;
 	unsigned i;
-
-	(void)argc; /* Shut up the compiler */
 
 	signal(SIGINT, SIG_IGN);
 	using_history();
@@ -87,7 +84,7 @@ int main(int argc, char * argv[])
 		line = readline(prompt);
 		if (line && *line) add_history(line);
 
-		line_eval(line);
+		line_eval(line, argc, argv);
 		free(line);
 	}
 
@@ -101,44 +98,35 @@ int main(int argc, char * argv[])
 	return ret_num;
 }
 
-int line_eval(char current[])
+int line_eval(char current[], unsigned short routine_argc, char ** routine_args)
 {
 	unsigned i, j;
 	const char *cmd;
 	char ** args;
-	char * tmp;
+	char * var_tmp;
+	char * routine_tmp;
+	unsigned argc;
 
-	tmp = NULL;
-	argc = 0;
+	args = NULL;
+	var_tmp = NULL;
+	routine_tmp = NULL;
 
-	args = split_cmd(current);
+	argc = split_cmd(&args, current);
 
-	if (args == NULL)
+	if (argc == 0)
 	{
-		if (errno == 1)
-			fprintf(stderr, "Error: Quote incomplete\n");
+		if (errno == 1) fprintf(stderr, "Error: Quote incomplete\n");
 
 		ret_num = 1;
 		return 1;
 	}
 
+	/* Blank command */
 	if (args[0] == NULL)
 	{
 		free(args);
 		ret_num = 0;
 		return 0;
-	}
-
-	for (i = 0; i < routine_num; i++)
-	{
-		if (!strcmp(routines[i].name, args[0]))
-		{
-			for (j = 0; j < routines[i].code_size; j++)
-			{
-				line_eval(routines[i].code[j]);
-			}
-			goto end;
-		}
 	}
 
 	/* Replace variables */
@@ -147,15 +135,58 @@ int line_eval(char current[])
 		if (args[i][0] == '$')
 		{
 			/* $? - Return value of the previous command */
-			if (args[i][1] == '?' && args[i][2] == 0)
+			if (args[i][2] == 0)
 			{
-				asprintf(&tmp, "%d", ret_num);
-				args[i] = tmp;
+				switch (args[i][1])
+				{
+					case '?':
+						asprintf(&var_tmp, "%d", ret_num);
+						args[i] = var_tmp;
+						goto end_if;
+
+					case '#':
+						asprintf(&var_tmp, "%d", routine_argc);
+						args[i] = var_tmp;
+						goto end_if;
+				}
+
+				if (args[i][1] >= '0' && args[i][1] <= '9')
+				{
+					if (routine_argc - 1 < args[i][1] - '0')
+					{
+						fprintf(stderr, "Error: $%c (%d) is out of range - argc is %d\n", args[i][1], args[i][1] - '0', routine_argc);
+						goto end;
+					}
+
+					args[i] = routine_args[args[i][1] - '0'];
+					goto end_if;
+				}
 			}
-			else
+
+			args[i] = getenv(args[i] + 1);
+
+end_if:		;
+		}
+	}
+
+	/* Try routines */
+	for (i = 0; i < routine_num; i++)
+	{
+		if (!strcmp(routines[i].name, args[0]))
+		{
+			for (j = 0; j < routines[i].code_size; j++)
 			{
-				args[i] = getenv(args[i] + 1);
+				routine_tmp = strdup(routines[i].code[j]);
+				if (routine_tmp == NULL)
+				{
+					perror("strdup failed: ");
+					exit(1);
+				}
+
+				line_eval(routine_tmp, argc, args);
+				free(routine_tmp);
 			}
+			goto end;
 		}
 	}
 
@@ -174,7 +205,7 @@ int line_eval(char current[])
 	ret_num = execute(args);
 
 end:
-	free(tmp);
+	free(var_tmp);
 	free(args);
 	return 0;
 }
