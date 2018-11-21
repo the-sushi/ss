@@ -173,11 +173,13 @@ int line_eval(char current[], unsigned short routine_argc, char ** routine_args)
 
 end_if:		;
 		}
-		else if (args[i][1] == '\\')
+
+		else if (args[i][0] == '\\')
 		{
 			var_tmp_num++;
 			var_tmp = realloc(var_tmp, var_tmp_num * sizeof (char *));
 			var_tmp[var_tmp_num - 1] = strdup(args[i] + 1);
+			args[i] = var_tmp[var_tmp_num - 1];
 		}
 	}
 

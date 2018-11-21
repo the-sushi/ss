@@ -46,7 +46,7 @@ char * tok_next(char * str, char delim, char quote)
 			ptr = NULL;
 			break;
 		}
-		else if (*loc == '\\')
+		else if (*loc == '\\' && *(loc + 1) != '$')
 		{
 			if (loc == start)
 			{
