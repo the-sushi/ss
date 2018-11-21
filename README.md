@@ -11,40 +11,97 @@ A simple shell.
 ## Usage:
 
 ```
-ss - help:
+ss(1)                                SS(1)                               ss(1)
 
-cd - Change directory
-		Usage: cd [directory]
 
-set - Set enviromental variable
-		Usage: set [variable] [value]
 
-unset - Unset enviromental variable
-		Usage: unset [variable]
+NAME
+       ss - Simple Shell
 
-echo - Echo arguments back
-		Usage: echo [text] <more text...>
 
-pwd - Path of working directory
-		Usage: pwd
+DESCRIPTION
+       ss,  or  Simple  Shell,  is a minimal command interpreter for UNIX-like
+       systems. It is not sh-compatible, nor does it aim to be.
 
-exit - Exits shell
-		Usage: exit <error code>
 
-routine - Creates a new routine
-		Usage:
-		~ > routine [name]
-		  routine> [code]
-		  routine> end
+   LIST OF BUILTINS
+       ss, cd, set, echo, pwd, exit, exec, routine,  unroutine,  listroutines,
+       help
 
-listroutines - Lists routines
-		Usage: listroutines
 
-unroutine - Deletes a routine
-		Usage: unroutine [name]
 
-help - Display this.  If there's one command that you don't want to forget, it's this one
-		Usage: help
+   BUILTIN USAGE
+       cd     Change directory
+
+              Usage: cd [directory]
+
+
+       set    Set enviromental variable
+
+              Usage: set [variable] [value]
+
+
+       unset  Unset enviromental variable
+
+              Usage: unset [variable]
+
+
+       echo   Echo arguments back
+
+              Usage: echo [text] <more text...>
+
+
+       pwd    Path of working directory
+
+              Usage: pwd
+
+
+       exit   Exits shell
+
+              Usage: exit <error code>
+
+
+       routine
+              Creates a new routine
+
+              Usage:
+
+              > routine [name]
+
+                   routine> [code]
+
+                   routine> end
+
+
+       listroutines
+              Lists added routines
+
+              Usage: listroutines
+
+
+       unroutine
+              Deletes a routine
+
+              Usage: unroutine [name]
+
+
+       help   Display  this  help page.  If there's one command that you don't
+              want to forget, it's this one
+
+              Usage: help
+
+
+SEE ALSO
+       sh(1), s(1), execline(1), rc(1), ec(1)
+
+
+NOTES
+       Is currently under development and is a WIP, not featureful enough  for
+       normal usage
+
+
+
+ss, version WIP0                   2018-11-8                             ss(1)
 ```
 
 See **ss(1)** for more (or not).
