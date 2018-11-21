@@ -16,7 +16,7 @@
 #endif
 
 /* Macros and defines */
-#define BUILTINS_NUM 10
+#define BUILTINS_NUM 11
 #define DECL_BUILTIN(NAME) int NAME##_builtin(unsigned short argc, char ** argv)
 #define CMD_ITEM(NAME) {#NAME, &NAME##_builtin}
 
@@ -37,6 +37,7 @@ struct routine_s
 /* Builtin Declarations */
 DECL_BUILTIN(cd);
 DECL_BUILTIN(set);
+DECL_BUILTIN(unset);
 DECL_BUILTIN(echo);
 DECL_BUILTIN(pwd);
 DECL_BUILTIN(exit);

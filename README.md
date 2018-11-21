@@ -19,6 +19,9 @@ cd - Change directory
 set - Set enviromental variable
 		Usage: set [variable] [value]
 
+unset - Unset enviromental variable
+		Usage: unset [variable]
+
 echo - Echo arguments back
 		Usage: echo [text] <more text...>
 

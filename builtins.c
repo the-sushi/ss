@@ -16,6 +16,7 @@ struct builtin_func_s builtin_table[] =
 	{
 		CMD_ITEM(cd),
 		CMD_ITEM(set),
+		CMD_ITEM(unset),
 		CMD_ITEM(echo),
 		CMD_ITEM(pwd),
 		CMD_ITEM(exit),
@@ -67,6 +68,22 @@ int set_builtin(unsigned short argc, char ** argv)
 	if (setenv(argv[1], argv[2], 1))
 	{
 		perror("Failed to set variable");
+		return 1;
+	}
+	return 0;
+}
+
+int unset_builtin(unsigned short argc, char ** argv)
+{
+	if (argc != 2)
+	{
+		fprintf(stderr, "Usage: unset [variable]");
+		return 1;
+	}
+
+	if (unsetenv(argv[1]))
+	{
+		perror("Failed to unset variable");
 		return 1;
 	}
 	return 0;
@@ -335,6 +352,9 @@ int help_builtin(unsigned short argc, char ** argv)
 
 			"\nset - Set enviromental variable\n"
 			"\tUsage: set [variable] [value]\n"
+
+			"\nunset - Unet enviromental variable\n"
+			"\tUsage: unset [variable]\n"
 
 			"\necho - Echo arguments back\n"
 			"\tUsage: echo [text] <more text...>\n"
