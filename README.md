@@ -34,6 +34,9 @@ routine - Creates a new routine
 		  routine> [code]
 		  routine> end
 
+listroutines - Deletes a routine
+		Usage: listroutines
+
 unroutine - Deletes a routine
 		Usage: unroutine [name]
 

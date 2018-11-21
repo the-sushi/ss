@@ -366,6 +366,9 @@ int help_builtin(unsigned short argc, char ** argv)
 			"\nunroutine - Deletes a routine\n"
 			"\tUsage: unroutine [name]\n"
 
+			"\nlistroutines - Deletes a routine\n"
+			"\tUsage: listroutines\n"
+
 			"\nhelp - Display this.  If there's one command that you don't want to forget, it's this one\n"
 			"\tUsage: help\n"
 		);
