@@ -58,27 +58,29 @@ $ ./build.sh uninstall
 
 ## Future features:
 
-- [x] Usable on a basic level
+- [x] Basic usability
 - [x] Variables
 - [x] Set `$SHELL`
 - [x] `$?`, `$PWD`, `$OWD`
-- [ ] `~` in prompt
-- [ ] Escape char `\`
+- [ ] Replace home path with `~` in prompt
+- [ ] Escape special chars (`\`)
 - [x] Basic routines
 - [x] Routine arguments (`$#`, `$1`, `$2`...)
 - [ ] Pipes
-- [ ] Redirect to file
+- [ ] File redirection (`>`)
 - [ ] if/else
 - [ ] Loops
 - [ ] Beat `s`'s level of functionality
-- [ ] Usable for every-day usage
+- [ ] Usable as a replacement for normal shells (`s` doesn't completely reach this in my opinion)
 
 ## Possible future features:
 - Globbing
 - Switch to linenoise or something similar
-- `<`
+- `<` redirection
 - Arrays
 - Lisp-style command nesting (`echo (echo hi)`)
+- Character aliases (`\n`, `\r`, etc)
+- Customizable prompt
 
 ## Other info
 
