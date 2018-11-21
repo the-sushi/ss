@@ -108,7 +108,7 @@ unsigned split_cmd(char *** args, char * line)
 	{
 		argc++;
 
-		tmp = realloc(*args, argc * sizeof (char *));
+		tmp = realloc(*args, (argc + 1) * sizeof (char *));
 		if (tmp == NULL) goto realloc_fail;
 		*args = tmp;
 
@@ -120,10 +120,6 @@ unsigned split_cmd(char *** args, char * line)
 		free(*args);
 		return 0;
 	}
-
-	tmp = realloc(*args, (argc + 1) * sizeof (char *));
-	if (tmp == NULL) goto realloc_fail;
-	*args = tmp;
 
 	(*args)[argc] = NULL;
 	return argc;
