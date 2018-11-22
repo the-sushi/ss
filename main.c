@@ -63,6 +63,7 @@ int main(int argc, char * argv[])
 		setenv("PWD", "????", 1);
 	}
 
+
 	while (exit_flag == 0)
 	{
 		if (ret_num) strcpy(prompt, BG_RED " ");

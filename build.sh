@@ -4,7 +4,6 @@ if [ "$1" == "debug" ]
 then
 	echo "Building: Debug"
 	$CC --std=c90 -Wall *.c -ledit -o ss -g
-	cppcheck . --std=c89
 elif [ "$1" == "" ]
 then
 	echo "Building"
