@@ -20,7 +20,6 @@
 #define PROMPT_END (" " FG_RED " > " CLR)
 
 /* ----- VARIBALE DECLARATIONS ----- */
-
 int ret_num;
 extern struct builtin_func_s builtin_table[];
 

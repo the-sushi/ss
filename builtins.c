@@ -164,7 +164,6 @@ realloc_fail:
 
 int exit_builtin(unsigned short argc, char ** argv)
 {
-	size_t len;
 	long int retval;
 	char * endptr;
 
@@ -176,11 +175,8 @@ int exit_builtin(unsigned short argc, char ** argv)
 		return 1;
 	}
 
-	if (argc == 1)
-		exit(0);
-
-	len = strlen(argv[1]);
-
+	/* No args */
+	if (argc == 1) exit(0);
 
 	errno = 0;
 	retval = strtol(argv[1], &endptr, 10);
