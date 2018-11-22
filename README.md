@@ -4,11 +4,11 @@
 
 A simple shell.
 
-## Screencast:
+## Screencast
 
 [![asciicast](https://asciinema.org/a/BvThSoa4Q7jW8ymcYkqoZ7vSb.svg)](https://asciinema.org/a/BvThSoa4Q7jW8ymcYkqoZ7vSb)
 
-## Usage:
+## Usage
 
 ```
 ss(1)                                SS(1)                               ss(1)
@@ -117,31 +117,31 @@ $ ./build.sh install
 $ ./build.sh uninstall
 ```
 
-## Future features:
+## Future features
 
-- [x] Basic usability
-- [x] Variables
-- [x] Set `$SHELL`
-- [x] `$?`, `$PWD`, `$OWD`
-- [ ] Replace home path with `~` in prompt
-- [ ] Escape special chars (`\`)
-- [x] Basic routines
-- [x] Routine arguments (`$#`, `$1`, `$2`...)
-- [ ] Pipes
-- [ ] File redirection (`>`)
-- [ ] if/else
-- [ ] Loops
-- [ ] Beat `s`'s level of functionality
-- [ ] Usable as a replacement for normal shells (`s` doesn't completely reach this in my opinion)
+-  [x] Basic usability
+-  [x] Variables
+-  [x] Set `$SHELL`
+-  [x] `$?`, `$PWD`, `$OWD`
+-  [ ] Replace home path with `~` in prompt
+-  [ ] Escape special chars (`\`)
+-  [x] Basic routines
+-  [x] Routine arguments (`$#`, `$1`, `$2`...)
+-  [ ] Pipes
+-  [ ] File redirection (`>`)
+-  [ ] if/else
+-  [ ] Loops
+-  [ ] Beat `s`'s level of functionality
+-  [ ] Usable as a replacement for normal shells (`s` doesn't completely reach this in my opinion)
 
-## Possible future features:
-- Globbing
-- Switch to linenoise or something similar
-- `<` redirection
-- Arrays
-- Lisp-style command nesting (`echo (echo hi)`)
-- Character aliases (`\n`, `\r`, etc)
-- Customizable prompt
+## Possible future features
+-  Globbing
+-  Switch to linenoise or something similar
+-  `<` redirection
+-  Arrays
+-  Lisp-style command nesting (`echo (echo hi)`)
+-  Character aliases (`\n`, `\r`, etc)
+-  Customizable prompt
 
 ## Other info
 
