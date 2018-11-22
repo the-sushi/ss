@@ -65,11 +65,13 @@ int set_builtin(unsigned short argc, char ** argv)
 		fprintf(stderr, "Usage: set [variable] [value]\n");
 		return 1;
 	}
+
 	if (setenv(argv[1], argv[2], 1))
 	{
 		perror("Failed to set variable");
 		return 1;
 	}
+
 	return 0;
 }
 
@@ -86,6 +88,7 @@ int unset_builtin(unsigned short argc, char ** argv)
 		perror("Failed to unset variable");
 		return 1;
 	}
+
 	return 0;
 }
 
@@ -127,13 +130,15 @@ int pwd_builtin(unsigned short argc, char ** argv)
 
 	bufsize = PATH_MAX;
 
-	while(getcwd(buf, bufsize) == NULL)
+	while (getcwd(buf, bufsize) == NULL)
 	{
 		if (errno == ERANGE)
 		{
 			bufsize += 128;
+
 			tmp = realloc(buf, bufsize);
 			if (tmp == NULL) goto realloc_fail;
+
 			buf = tmp;
 		}
 		else
@@ -173,6 +178,7 @@ int exit_builtin(unsigned short argc, char ** argv)
 
 	len = strlen(argv[1]);
 	i = 0;
+
 	if (argv[1][0] == '-') i++;
 
 	for (; i < len; i++)
@@ -229,10 +235,13 @@ int routine_builtin(unsigned short argc, char ** argv)
 				return 1;
 			}
 		}
-		tmp = realloc(routines, sizeof (struct routine_s) * (routine_num+1));
+
+		tmp = realloc(routines, sizeof (struct routine_s) * (routine_num + 1));
 		if (tmp == NULL) goto realloc_fail;
+
 		routines = tmp;
 	}
+
 	routine_num++;
 
 	current = &routines[routine_num - 1];
@@ -241,6 +250,7 @@ int routine_builtin(unsigned short argc, char ** argv)
 
 	current->name = strdup(argv[1]);
 	if (current->name == NULL) goto malloc_fail;
+
 	current->code_size = 0;
 
 	while ( (line = readline("  routine> ")) && strcmp(line, "end") )
@@ -286,6 +296,7 @@ int unroutine_builtin(unsigned short argc, char ** argv)
 	for (i = 0; i < routine_num; i++)
 	{
 		current = &routines[i];
+
 		if (!strcmp(current->name, argv[1]))
 		{
 			routine_clear(current);
@@ -301,7 +312,7 @@ int unroutine_builtin(unsigned short argc, char ** argv)
 			else
 			{
 				tmp = realloc(routines, sizeof(struct routine_s) * routine_num);
-	
+
 				if (tmp == NULL)
 				{
 					fprintf(stderr, "Error: realloc failed");
@@ -341,7 +352,8 @@ int listroutines_builtin(unsigned short argc, char ** argv)
 
 int help_builtin(unsigned short argc, char ** argv)
 {
-	(void)argc; (void)argv;
+	(void)argc;
+	(void)argv;
 
 	puts
 		(

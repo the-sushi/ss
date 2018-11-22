@@ -73,6 +73,7 @@ int main(int argc, char * argv[])
 		strcat(prompt, PROMPT_END);
 
 		line = readline(prompt);
+
 		if (line && *line) add_history(line);
 
 		line_eval(line, argc, argv);
@@ -92,7 +93,7 @@ int main(int argc, char * argv[])
 int line_eval(char current[], unsigned short routine_argc, char ** routine_args)
 {
 	unsigned i, j;
-	const char *cmd;
+	const char * cmd;
 	char ** args;
 	char ** var_tmp;
 	unsigned var_tmp_num;
@@ -134,18 +135,20 @@ int line_eval(char current[], unsigned short routine_argc, char ** routine_args)
 				{
 					case '?':
 						var_tmp_num++;
+
 						var_tmp = realloc(var_tmp, var_tmp_num * sizeof (char *));
 						if (var_tmp == NULL) goto alloc_fail;
 
 						asprintf(&var_tmp[var_tmp_num - 1], "%d", ret_num);
 						if (var_tmp[var_tmp_num - 1] == NULL) goto alloc_fail;
-						
+
 						args[i] = var_tmp[var_tmp_num - 1];
 
 						goto end_if;
 
 					case '#':
 						var_tmp_num++;
+
 						var_tmp = realloc(var_tmp, var_tmp_num * sizeof (char *));
 						if (var_tmp == NULL) goto alloc_fail;
 
@@ -161,7 +164,14 @@ int line_eval(char current[], unsigned short routine_argc, char ** routine_args)
 				{
 					if (routine_argc - 1 < args[i][1] - '0')
 					{
-						fprintf(stderr, "Error: $%c (%d) is out of range - argc is %d\n", args[i][1], args[i][1] - '0', routine_argc);
+						fprintf
+							(
+								stderr,
+								"Error: $%c (%d) is out of range - argc is %d\n",
+								args[i][1],
+								args[i][1] - '0',
+								routine_argc
+							);
 						goto end;
 					}
 
@@ -172,14 +182,20 @@ int line_eval(char current[], unsigned short routine_argc, char ** routine_args)
 
 			args[i] = getenv(args[i] + 1);
 
-end_if:		;
+end_if:
+			;
 		}
 
 		else if (args[i][0] == '\\')
 		{
 			var_tmp_num++;
+
 			var_tmp = realloc(var_tmp, var_tmp_num * sizeof (char *));
+			if (var_tmp == NULL) goto alloc_fail;
+
 			var_tmp[var_tmp_num - 1] = strdup(args[i] + 1);
+			if (var_tmp[var_tmp_num - 1] == NULL) goto alloc_fail;
+
 			args[i] = var_tmp[var_tmp_num - 1];
 		}
 	}
@@ -192,15 +208,12 @@ end_if:		;
 			for (j = 0; j < routines[i].code_size; j++)
 			{
 				routine_tmp = strdup(routines[i].code[j]);
-				if (routine_tmp == NULL)
-				{
-					perror("strdup failed: ");
-					exit(1);
-				}
+				if (routine_tmp == NULL) goto alloc_fail;
 
 				line_eval(routine_tmp, argc, args);
 				free(routine_tmp);
 			}
+
 			goto end;
 		}
 	}
@@ -220,9 +233,11 @@ end_if:		;
 	ret_num = execute(args);
 
 end:
+
 	if (var_tmp != NULL)
 	{
 		for (var_tmp_num--; var_tmp_num != 0; var_tmp_num--) free(var_tmp[var_tmp_num]);
+
 		free(var_tmp);
 	}
 
@@ -230,7 +245,7 @@ end:
 	return 0;
 
 alloc_fail:
-	perror("Failed to reallocate string");
+	perror("Allocation faliure");
 	free(args);
 	exit(1);
 }

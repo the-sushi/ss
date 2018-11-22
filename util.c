@@ -14,7 +14,8 @@ extern unsigned argc;
 char * tok_next(char * str, char delim, char quote)
 {
 	static char * ptr;
-	char *start, *loc;
+	char * start;
+	char * loc;
 	static unsigned char quote_on;
 
 	/* NULL - Continue with previous */
@@ -38,7 +39,7 @@ char * tok_next(char * str, char delim, char quote)
 		(
 			start = ptr, loc = ptr ;
 			/* nothing */ ;
-			 loc++
+			loc++
 		)
 	{
 		if (*loc == 0)
@@ -52,12 +53,14 @@ char * tok_next(char * str, char delim, char quote)
 			{
 				start++;
 			}
+
 			/* Swap quote at end of token */
 			if ( *(loc + 1) == '"' && (*(loc + 2) == delim || *(loc + 2) == 0))
 			{
 				*loc = '"';
 				*(loc + 1) = *(loc + 2);
 			}
+
 			loc++;
 		}
 		else if ( *loc == quote )
@@ -88,6 +91,7 @@ char * tok_next(char * str, char delim, char quote)
 			break;
 		}
 	}
+
 	return start;
 }
 
@@ -111,6 +115,7 @@ unsigned split_cmd(char *** args, char * line)
 
 		tmp = realloc(*args, (argc + 1) * sizeof (char *));
 		if (tmp == NULL) goto realloc_fail;
+
 		*args = tmp;
 
 		(*args)[argc - 1] = arg;
@@ -163,7 +168,7 @@ int execute(char ** args)
 		{
 			waitpid(pid, &status, WUNTRACED | WCONTINUED);
 		}
-			while ( !WIFEXITED(status) && !WIFSIGNALED(status) );
+		while ( !WIFEXITED(status) && !WIFSIGNALED(status) );
 
 		/* putchar('\n'); */
 		return WEXITSTATUS(status);
