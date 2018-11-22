@@ -1,3 +1,5 @@
+#!/bin/sh
+
 if [ "$1" == "debug" ]
 then
 	echo "Building: Debug"
