@@ -3,11 +3,11 @@
 if [ "$1" == "debug" ]
 then
 	echo "Building: Debug"
-	$CC --std=c90 -Wall *.c -ledit -o ss -g
+	$CC --std=c90 -Wall src/*.c -ledit -o ss -g
 elif [ "$1" == "" ]
 then
 	echo "Building"
-	$CC --std=c90 -Wall -O3 *.c -ledit -o ss
+	$CC --std=c90 -Wall -O3 src/*.c -ledit -o ss
 elif [ "$1" == "install" ]
 then
 	echo "Installing"
