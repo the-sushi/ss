@@ -48,3 +48,6 @@ if
 The same applies to all other similar things, such as while, for, switch, etc.
 
 Braces always go on the next line.  Structs are never `typedef`ed.
+
+## Further notes:
+Follow the code of conduct.  You may find it in the CODE_OF_CONDUCT.md file in the root directory of this project.
