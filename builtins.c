@@ -1,6 +1,6 @@
 /* ----- Includes  ----- */
 /* Standard library */
-#include <ctype.h>
+#include <limits.h>
 
 /* Local */
 #include "globals.h"
@@ -164,8 +164,11 @@ realloc_fail:
 
 int exit_builtin(unsigned short argc, char ** argv)
 {
-	unsigned short i;
-	unsigned short len;
+	size_t len;
+	long int retval;
+	char * endptr;
+
+	endptr = NULL;
 
 	if (argc > 2)
 	{
@@ -177,21 +180,28 @@ int exit_builtin(unsigned short argc, char ** argv)
 		exit(0);
 
 	len = strlen(argv[1]);
-	i = 0;
 
-	if (argv[1][0] == '-') i++;
 
-	for (; i < len; i++)
+	errno = 0;
+	retval = strtol(argv[1], &endptr, 10);
+	if (endptr != NULL)
 	{
-		if (isdigit(argv[1][i]) == 0)
-		{
-			fprintf(stderr, "Not a valid exit code\n");
-			return 1;
-		}
+		fprintf(stderr, "Error: Not a valid exit code!\n");
+		return 1;
+	}
+	if (errno != 0)
+	{
+		perror("Error while converting number");
+		return 1;
+	}
+	if (retval > INT_MAX || retval < INT_MIN)
+	{
+		fprintf(stderr, "Error: Number out of range");
+		return 1;
 	}
 
 	exit_flag = 1;
-	return atoi(argv[1]);
+	return (int) retval;
 }
 
 int exec_builtin(unsigned short argc, char ** argv)

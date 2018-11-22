@@ -35,7 +35,7 @@ int main(int argc, char * argv[]);
 int main(int argc, char * argv[])
 {
 	char * line;
-	char prompt[PATH_MAX + 32];
+	char prompt[PATH_MAX + 16];
 	char * shell_path;
 	unsigned i;
 
@@ -69,7 +69,7 @@ int main(int argc, char * argv[])
 		if (ret_num) strcpy(prompt, BG_RED " ");
 		else         strcpy(prompt, BG_WHITE " ");
 
-		strcat(prompt, path);
+		strncat(prompt, path, PATH_MAX);
 		strcat(prompt, PROMPT_END);
 
 		line = readline(prompt);
