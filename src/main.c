@@ -36,9 +36,6 @@ int main(int argc, char * argv[])
 	char * line;
 	char prompt[PATH_MAX + 16];
 	char * shell_path;
-#ifdef DEBUG
-	unsigned i;
-#endif
 
 	signal(SIGINT, SIG_IGN);
 	using_history();
@@ -65,7 +62,7 @@ int main(int argc, char * argv[])
 	}
 
 
-	while (exit_flag == 0)
+	while (1)
 	{
 		if (ret_num) strcpy(prompt, BG_RED " ");
 		else         strcpy(prompt, BG_WHITE " ");
@@ -80,15 +77,6 @@ int main(int argc, char * argv[])
 		line_eval(line, argc, argv);
 		free(line);
 	}
-
-#ifdef DEBUG
-	for (i = 0; i < routine_num; i++)
-	{
-		routine_clear(&routines[i]);
-	}
-
-	free(routines);
-#endif
 
 	return ret_num;
 }

@@ -132,12 +132,11 @@ unsigned split_cmd(char *** args, char * line)
 
 malloc_fail:
 	perror("malloc() failed");
-	exit_flag = 1;
-	return 0;
+	exit(1);
+
 realloc_fail:
 	perror("realloc() failed");
-	exit_flag = 1;
-	return 0;
+	exit(1);
 }
 
 int execute(char ** args)

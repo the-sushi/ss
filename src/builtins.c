@@ -196,8 +196,7 @@ int exit_builtin(unsigned short argc, char ** argv)
 		return 1;
 	}
 
-	exit_flag = 1;
-	return retval;
+	exit(retval);
 }
 
 int exec_builtin(unsigned short argc, char ** argv)
@@ -274,12 +273,10 @@ int routine_builtin(unsigned short argc, char ** argv)
 	return 0;
 malloc_fail:
 	perror("malloc() failed");
-	exit_flag = 1;
-	return 1;
+	exit(1);
 realloc_fail:
 	perror("realloc() failed");
-	exit_flag = 1;
-	return 1;
+	exit(1);
 }
 
 int unroutine_builtin(unsigned short argc, char ** argv)
@@ -322,8 +319,7 @@ int unroutine_builtin(unsigned short argc, char ** argv)
 				if (tmp == NULL)
 				{
 					fprintf(stderr, "Error: realloc failed");
-					exit_flag = 1;
-					return 1;
+					exit(1);
 				}
 
 				routines = tmp;
