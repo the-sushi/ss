@@ -107,7 +107,7 @@ unsigned split_cmd(char *** args, char * line)
 	if (*args == NULL) goto malloc_fail;
 
 	arg = tok_next(line, ' ', '"');
-	(*args)[argc - 1] = arg;
+	(*args)[0] = arg;
 
 	while (( arg = tok_next(NULL, ' ', '"') ) != NULL)
 	{
