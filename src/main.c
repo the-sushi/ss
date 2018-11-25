@@ -89,6 +89,7 @@ int line_eval(char current[], unsigned short routine_argc, char ** routine_args)
 	char ** var_tmp;
 	unsigned var_tmp_num;
 	char * routine_tmp;
+	void * tmp;
 	unsigned argc;
 
 	args        = NULL;
@@ -127,8 +128,9 @@ int line_eval(char current[], unsigned short routine_argc, char ** routine_args)
 					case '?':
 						var_tmp_num++;
 
-						var_tmp = realloc(var_tmp, var_tmp_num * sizeof (char *));
-						if (var_tmp == NULL) goto alloc_fail;
+						tmp = realloc(var_tmp, var_tmp_num * sizeof (char *));
+						if (tmp == NULL) goto alloc_fail;
+						var_tmp = tmp;
 
 						asprintf(&var_tmp[var_tmp_num - 1], "%d", ret_num);
 						if (var_tmp[var_tmp_num - 1] == NULL) goto alloc_fail;
@@ -140,8 +142,9 @@ int line_eval(char current[], unsigned short routine_argc, char ** routine_args)
 					case '#':
 						var_tmp_num++;
 
-						var_tmp = realloc(var_tmp, var_tmp_num * sizeof (char *));
-						if (var_tmp == NULL) goto alloc_fail;
+						tmp = realloc(var_tmp, var_tmp_num * sizeof (char *));
+						if (tmp == NULL) goto alloc_fail;
+						var_tmp = tmp;
 
 						asprintf(&var_tmp[var_tmp_num - 1], "%d", routine_argc);
 						if (var_tmp[var_tmp_num - 1] == NULL) goto alloc_fail;
@@ -228,7 +231,6 @@ end:
 	if (var_tmp != NULL)
 	{
 		for (var_tmp_num--; var_tmp_num != 0; var_tmp_num--) free(var_tmp[var_tmp_num]);
-
 		free(var_tmp);
 	}
 
@@ -238,5 +240,10 @@ end:
 alloc_fail:
 	perror("Allocation faliure");
 	free(args);
+	if (var_tmp != NULL)
+	{
+		for (var_tmp_num--; var_tmp_num != 0; var_tmp_num--) free(var_tmp[var_tmp_num]);
+		free(var_tmp);
+	}
 	exit(1);
 }
