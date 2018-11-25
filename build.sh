@@ -3,7 +3,7 @@
 if [ "$1" == "debug" ]
 then
 	echo "Building: Debug"
-	$CC ---std=c90 -Wall -Wextra -DDEBUG src/*.c -ledit -o ss -g
+	$CC --std=c90 -Wall -Wextra -DDEBUG src/*.c -ledit -o ss -g
 elif [ "$1" == "" ]
 then
 	echo "Building"
