@@ -36,7 +36,6 @@ int main(int argc, char * argv[])
 	char * line;
 	char prompt[PATH_MAX + 16];
 	char * shell_path;
-	unsigned i;
 
 	signal(SIGINT, SIG_IGN);
 	using_history();
@@ -79,12 +78,14 @@ int main(int argc, char * argv[])
 		free(line);
 	}
 
+#ifdef DEBUG
 	for (i = 0; i < routine_num; i++)
 	{
 		routine_clear(&routines[i]);
 	}
 
 	free(routines);
+#endif
 
 	return ret_num;
 }

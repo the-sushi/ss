@@ -197,7 +197,7 @@ int exit_builtin(unsigned short argc, char ** argv)
 	}
 
 	exit_flag = 1;
-	return (int) retval;
+	return retval;
 }
 
 int exec_builtin(unsigned short argc, char ** argv)
