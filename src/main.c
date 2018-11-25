@@ -36,6 +36,9 @@ int main(int argc, char * argv[])
 	char * line;
 	char prompt[PATH_MAX + 16];
 	char * shell_path;
+#ifdef DEBUG
+	unsigned i;
+#endif
 
 	signal(SIGINT, SIG_IGN);
 	using_history();
