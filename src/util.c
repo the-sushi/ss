@@ -33,7 +33,6 @@ char * tok_next(char * str, char delim, char quote)
 		return NULL;
 	}
 
-	while (*ptr == delim) ptr++;
 
 	for
 		(
@@ -47,7 +46,8 @@ char * tok_next(char * str, char delim, char quote)
 			ptr = NULL;
 			break;
 		}
-		else if (*loc == '\\' && *(loc + 1) != '$')
+
+		if (*loc == '\\' && *(loc + 1) != '$')
 		{
 			if (loc == start)
 			{
@@ -86,12 +86,16 @@ char * tok_next(char * str, char delim, char quote)
 
 		if (*loc == delim && quote_on == 0)
 		{
-			*loc = 0;
-			ptr = ++loc;
+			while (*loc == delim)
+			{
+				*loc = 0;
+				ptr = ++loc;
+			}
 			break;
 		}
 	}
 
+	if (start == loc) return NULL;
 	return start;
 }
 

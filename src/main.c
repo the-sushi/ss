@@ -97,6 +97,8 @@ int line_eval(char current[], unsigned short routine_argc, char ** routine_args)
 	var_tmp     = NULL;
 	var_tmp_num = 0;
 
+	errno = 0;
+
 	argc = split_cmd(&args, current);
 
 	if (argc == 0)
