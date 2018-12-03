@@ -7,7 +7,7 @@ A simple shell.
 
 ## Screencast
 
-[![Demo](https://my.mixtape.moe/wmsuin.gif)](https://asciinema.org/a/ro5Srsmfw5ZHC3otUyMeyKkis)
+[![Demo](https://my.mixtape.moe/kgyhef.svg)](https://asciinema.org/a/ro5Srsmfw5ZHC3otUyMeyKkis)
 
 ## Usage
 
