@@ -129,7 +129,7 @@ $ ./build.sh uninstall
 -  [x] Basic routines
 -  [x] Routine arguments (`$#`, `$1`, `$2`...)
 -  [ ] Pipes
--  [ ] File redirection (`>`)
+-  [x] File redirection (`>`)
 -  [ ] if/else
 -  [ ] Loops
 -  [ ] Beat `s`'s level of functionality
