@@ -51,8 +51,10 @@ DECL_BUILTIN(help);
 unsigned split_cmd(char *** args, char * line);
 int execute(char ** args);
 void routine_clear (struct routine_s * routine);
-char path[PATH_MAX];
+int stdout_set (char * loc, char * mode);
 
 /* Variable declarations */
+char path[PATH_MAX];
 struct routine_s * routines;
 unsigned routine_num;
+int stdout_bak;

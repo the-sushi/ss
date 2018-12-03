@@ -150,7 +150,6 @@ int pwd_builtin(unsigned short argc, char ** argv)
 	}
 
 	puts(buf);
-
 	free(buf);
 	return 0;
 
@@ -158,6 +157,7 @@ malloc_fail:
 	perror("malloc() failed");
 	return 1;
 realloc_fail:
+	free(buf);
 	perror("realloc() failed");
 	return 1;
 }
@@ -234,7 +234,7 @@ int routine_builtin(unsigned short argc, char ** argv)
 	{
 		for (i = 0; i < routine_num; i++)
 		{
-			if (! strcmp(routines[i].name, argv[1]))
+			if ( strcmp(routines[i].name, argv[1]) == 0 )
 			{
 				fprintf(stderr, "Error: Routine exists\n");
 				return 1;
@@ -248,9 +248,7 @@ int routine_builtin(unsigned short argc, char ** argv)
 	}
 
 	routine_num++;
-
 	current = &routines[routine_num - 1];
-
 	current->code = NULL; /* realloc(NULL, size) acts like malloc(size) */
 
 	current->name = strdup(argv[1]);
@@ -258,7 +256,7 @@ int routine_builtin(unsigned short argc, char ** argv)
 
 	current->code_size = 0;
 
-	while ( (line = readline("  routine> ")) && strcmp(line, "end") )
+	while ( (line = readline("  routine> ")) && strcmp(line, "end") != 0 )
 	{
 		current->code_size++;
 
@@ -300,7 +298,7 @@ int unroutine_builtin(unsigned short argc, char ** argv)
 	{
 		current = &routines[i];
 
-		if (!strcmp(current->name, argv[1]))
+		if ( strcmp(current->name, argv[1]) == 0 )
 		{
 			routine_clear(current);
 

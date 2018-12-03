@@ -61,6 +61,12 @@ int main(int argc, char * argv[])
 		setenv("PWD", "????", 1);
 	}
 
+	stdout_bak = dup(STDOUT_FILENO);
+	if (stdout_bak == -1)
+	{
+		perror("Failed to save stdout");
+		return 1;
+	}
 
 	while (1)
 	{
@@ -84,19 +90,23 @@ int main(int argc, char * argv[])
 int line_eval(char current[], unsigned short routine_argc, char ** routine_args)
 {
 	unsigned i, j;
+
 	const char * cmd;
 	char ** args;
+	unsigned argc;
+
 	char ** var_tmp;
 	unsigned var_tmp_num;
 	char * routine_tmp;
 	void * tmp;
-	unsigned argc;
+
+	uint8_t stdout_redirect;
 
 	args        = NULL;
 	routine_tmp = NULL;
 	var_tmp     = NULL;
 	var_tmp_num = 0;
-
+	stdout_redirect = 0;
 	errno = 0;
 
 	argc = split_cmd(&args, current);
@@ -184,6 +194,7 @@ end_if:
 
 		else if (args[i][0] == '\\')
 		{
+			fflush(stdout);
 			var_tmp_num++;
 
 			var_tmp = realloc(var_tmp, var_tmp_num * sizeof (char *));
@@ -194,12 +205,36 @@ end_if:
 
 			args[i] = var_tmp[var_tmp_num - 1];
 		}
+
+		else if (strcmp(args[i], ">>") == 0)
+		{
+			if (stdout_set(args[i+1], "a") == 1)
+			{
+				ret_num = 1;
+				goto end;
+			}
+			stdout_redirect = 1;
+			args[i] = NULL;
+			argc = i;
+		}
+
+		else if (strcmp(args[i], ">") == 0)
+		{
+			if (stdout_set(args[i+1], "w") == 1)
+			{
+				ret_num = 1;
+				goto end;
+			}
+			stdout_redirect = 1;
+			args[i] = NULL;
+			argc = i;
+		}
 	}
 
 	/* Try routines */
 	for (i = 0; i < routine_num; i++)
 	{
-		if (!strcmp(routines[i].name, args[0]))
+		if (strcmp(routines[i].name, args[0]) == 0)
 		{
 			for (j = 0; j < routines[i].code_size; j++)
 			{
@@ -219,7 +254,7 @@ end_if:
 	{
 		cmd = builtin_table[i].cmd;
 
-		if ( ! strcmp(args[0], cmd) )
+		if ( strcmp(args[0], cmd) == 0 )
 		{
 			ret_num = builtin_table[i].func(argc, args);
 			goto end;
@@ -234,6 +269,17 @@ end:
 	{
 		for (var_tmp_num--; var_tmp_num != 0; var_tmp_num--) free(var_tmp[var_tmp_num]);
 		free(var_tmp);
+	}
+
+	if (stdout_redirect == 1)
+	{
+		fflush(stdout);
+		dup2(stdout_bak, STDOUT_FILENO);
+		if (stdout == NULL)
+		{
+			perror("Failed to restore stdout");
+			ret_num = 1;
+		}
 	}
 
 	free(args);

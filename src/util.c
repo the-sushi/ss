@@ -11,7 +11,7 @@ extern unsigned argc;
 
 /* ----- CODE ----- */
 
-char * tok_next(char * str, char delim, char quote)
+char * tok_next(char * str, char delim)
 {
 	static char * ptr;
 	char * start;
@@ -58,12 +58,12 @@ char * tok_next(char * str, char delim, char quote)
 			if ( *(loc + 1) == '"' && (*(loc + 2) == delim || *(loc + 2) == 0))
 			{
 				*loc = '"';
-				*(loc + 1) = *(loc + 2);
+				*(loc + 1) = 0;
 			}
 
 			loc++;
 		}
-		else if ( *loc == quote )
+		else if ( *loc == '"' )
 		{
 			/* There can't be a backslash if there's nothing before us */
 			if (loc == start)
@@ -110,10 +110,10 @@ unsigned split_cmd(char *** args, char * line)
 	*args = malloc(argc * sizeof (char *));
 	if (*args == NULL) goto malloc_fail;
 
-	arg = tok_next(line, ' ', '"');
+	arg = tok_next(line, ' ');
 	(*args)[0] = arg;
 
-	while (( arg = tok_next(NULL, ' ', '"') ) != NULL)
+	while (( arg = tok_next(NULL, ' ') ) != NULL)
 	{
 		argc++;
 
@@ -188,4 +188,16 @@ void routine_clear (struct routine_s * routine)
 	}
 
 	free(routines->code);
+}
+
+int stdout_set (char * loc, char * mode)
+{
+	fflush(stdout);
+	if (freopen(loc, mode, stdout) == NULL)
+	{
+		perror("Failed to set stdout");
+		return 1;
+	}
+
+	return 0;
 }
