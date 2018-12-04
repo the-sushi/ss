@@ -1,7 +1,7 @@
 # Simple shell
 
 ![Coverity](https://scan.coverity.com/projects/17208/badge.svg)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1d04b853d2554d3fa3676f62458061e3)](https://www.codacy.com/app/joshpritsker/ss?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=the-sushi/ss&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5ed9d24a3897407f8b721c2a94782b5e)](https://www.codacy.com/app/joshpritsker/ss?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=the-sushi/ss&amp;utm_campaign=Badge_Grade)
 
 A simple shell.
 
