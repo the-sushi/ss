@@ -9,9 +9,35 @@ A simple shell.
 
 [![Demo](https://my.mixtape.moe/kgyhef.svg)](https://asciinema.org/a/ro5Srsmfw5ZHC3otUyMeyKkis)
 
+## Future features
+
+-  [x] Basic usability
+-  [x] Variables
+-  [x] Set `$SHELL`
+-  [x] `$?`, `$PWD`, `$OWD`
+-  [ ] Replace home path with `~` in prompt
+-  [ ] Escape special chars (`\`)
+-  [x] Basic routines
+-  [x] Routine arguments (`$#`, `$1`, `$2`...)
+-  [ ] Pipes
+-  [x] File redirection (`>`)
+-  [ ] if/else
+-  [ ] Loops
+-  [ ] Beat `s`'s level of functionality
+-  [ ] Usable as a replacement for normal shells (`s` doesn't completely reach this in my opinion)
+
+## Possible future features
+-  Globbing
+-  Switch to linenoise or something similar
+-  `<` redirection
+-  Arrays
+-  Lisp-style command nesting (`echo (echo hi)`)
+-  Character aliases (`\n`, `\r`, etc)
+-  Customizable prompt
+
 ## Usage
 
-```
+```man
 ss(1)                                SS(1)                               ss(1)
 
 
@@ -117,32 +143,6 @@ $ ./build.sh install
 ```
 $ ./build.sh uninstall
 ```
-
-## Future features
-
--  [x] Basic usability
--  [x] Variables
--  [x] Set `$SHELL`
--  [x] `$?`, `$PWD`, `$OWD`
--  [ ] Replace home path with `~` in prompt
--  [ ] Escape special chars (`\`)
--  [x] Basic routines
--  [x] Routine arguments (`$#`, `$1`, `$2`...)
--  [ ] Pipes
--  [x] File redirection (`>`)
--  [ ] if/else
--  [ ] Loops
--  [ ] Beat `s`'s level of functionality
--  [ ] Usable as a replacement for normal shells (`s` doesn't completely reach this in my opinion)
-
-## Possible future features
--  Globbing
--  Switch to linenoise or something similar
--  `<` redirection
--  Arrays
--  Lisp-style command nesting (`echo (echo hi)`)
--  Character aliases (`\n`, `\r`, etc)
--  Customizable prompt
 
 ## Other info
 
