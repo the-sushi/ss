@@ -29,7 +29,7 @@ A simple shell.
 ## Possible future features
 -  Globbing
 -  Switch to linenoise or something similar
--  `<` redirection
+-  [x] `<` redirection -- WILL BE REMOVED
 -  Arrays
 -  Lisp-style command nesting (`echo (echo hi)`)
 -  Character aliases (`\n`, `\r`, etc)

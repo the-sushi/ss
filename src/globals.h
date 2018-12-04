@@ -53,14 +53,15 @@ DECL_BUILTIN(help);
 unsigned split_cmd (char *** args, char * line);
 int execute (char ** args);
 void routine_clear (struct routine_s * routine);
-int stdout_set (char * loc, char * mode);
+int fp_set(FILE * fp, char * loc, char * mode);
 int var_swap (char *** var_tmp, char ** arg, unsigned var_num, unsigned short routine_argc, char ** routine_args);
-char line_eval(char current[], unsigned short routine_argc, char ** routine_args);
-void split_eval(unsigned short argc, char ** args);
+char line_run(char current[], unsigned short routine_argc, char ** routine_args);
+void args_eval(unsigned short argc, char ** args);
 
 /* Variable declarations */
 char path[PATH_MAX];
 struct routine_s * routines;
 unsigned routine_num;
 int stdout_bak;
+int stdin_bak;
 int ret_num;

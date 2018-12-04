@@ -47,6 +47,7 @@ char * tok_next(char * str, char delim)
 			break;
 		}
 
+		/* Check for escape */
 		if (*loc == '\\' && *(loc + 1) != '$')
 		{
 			if (loc == start)
@@ -122,7 +123,6 @@ unsigned split_cmd(char *** args, char * line)
 		if (tmp == NULL) goto realloc_fail;
 
 		*args = tmp;
-
 		(*args)[argc - 1] = arg;
 	}
 
@@ -182,6 +182,7 @@ int execute(char ** args)
 	}
 }
 
+
 void routine_clear (struct routine_s * routine)
 {
 	free(routines->name);
@@ -194,12 +195,13 @@ void routine_clear (struct routine_s * routine)
 	free(routines->code);
 }
 
-int stdout_set(char * loc, char * mode)
+
+int fp_set(FILE * fp, char * loc, char * mode)
 {
-	fflush(stdout);
-	if (freopen(loc, mode, stdout) == NULL)
+	fflush(fp);
+	if (freopen(loc, mode, fp) == NULL)
 	{
-		perror("Failed to set stdout");
+		perror("Failed to redirect file pointer");
 		return 1;
 	}
 
@@ -277,7 +279,7 @@ alloc_fail:
 }
 
 
-void split_eval(unsigned short argc, char ** args)
+void args_eval(unsigned short argc, char ** args)
 {
 	unsigned i = 0, j = 0;
 	char * routine_tmp;
@@ -298,7 +300,7 @@ void split_eval(unsigned short argc, char ** args)
 					return;
 				}
 
-				if (line_eval(routine_tmp, argc, args) == -1)
+				if (line_run(routine_tmp, argc, args) == -1)
 				{
 					free(routine_tmp);
 					ret_num = 1;

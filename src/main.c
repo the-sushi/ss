@@ -52,6 +52,8 @@ int main(int argc, char * argv[])
 	}
 
 	stdout_bak = dup(STDOUT_FILENO);
+	stdin_bak  = dup(STDOUT_FILENO);
+
 	if (stdout_bak == -1)
 	{
 		perror("Failed to save stdout");
@@ -70,21 +72,22 @@ int main(int argc, char * argv[])
 
 		if (line && *line) add_history(line);
 
-		line_eval(line, argc, argv);
+		line_run(line, argc, argv);
 		free(line);
 	}
 
 	return ret_num;
 }
 
-char line_eval(char current[], unsigned short routine_argc, char ** routine_args)
+char line_run(char current[], unsigned short routine_argc, char ** routine_args)
 {
 	/** DECLARATIONS **/
 	/* Loop counters and temp data */
 	unsigned i = 0;
 
 	/* Flags */
-	uint8_t stdout_redirect = 0;
+	uint8_t redirect = 0;
+	/* 000000[stdin][stdout] */
 
 	/* For the command itself */
 	char ** args = NULL;
@@ -114,6 +117,9 @@ char line_eval(char current[], unsigned short routine_argc, char ** routine_args
 	}
 
 
+	/* TODO: Rewrite this to allow for lisp-style nesting and `x >> y < z`, because this is awful.
+	 * It would probably be simpler with xstr, but I'm not sure if I want to require that
+	 */
 	for (; i < argc; i++)
 	{
 		if (args[i][0] == '$')
@@ -126,32 +132,53 @@ char line_eval(char current[], unsigned short routine_argc, char ** routine_args
 			}
 		}
 
-		else if (strcmp(args[i], ">>") == 0)
+		else if (args[i + 2] == NULL)
 		{
-			if (stdout_set(args[i+1], "a") == 1)
+			if (strcmp(args[i], ">>") == 0)
 			{
-				ret_num = 1;
-				goto cleanup;
+				if (fp_set(stdout, args[i+1], "a") == 1)
+				{
+					ret_num = 1;
+					goto cleanup;
+				}
+	
+				redirect |= 1;
+				args[i] = NULL;
+				argc = i;
+				break;
 			}
-			stdout_redirect = 1;
-			args[i] = NULL;
-			argc = i;
-		}
-
-		else if (strcmp(args[i], ">") == 0)
-		{
-			if (stdout_set(args[i+1], "w") == 1)
+	
+			else if (strcmp(args[i], ">") == 0)
 			{
-				ret_num = 1;
-				goto cleanup;
+				if (fp_set(stdout, args[i+1], "w") == 1)
+				{
+					ret_num = 1;
+					goto cleanup;
+				}
+	
+				redirect |= 1;
+				args[i] = NULL;
+				argc = i;
+				break;
 			}
-			stdout_redirect = 1;
-			args[i] = NULL;
-			argc = i;
+	
+			else if (strcmp(args[i], "<") == 0)
+			{
+				if (fp_set(stdin, args[i+1], "r") == 1)
+				{
+					ret_num = 1;
+					goto cleanup;
+				}
+	
+				redirect |= 2;
+				args[i] = NULL;
+				argc = i;
+				break;
+			}
 		}
 	}
 
-	split_eval(argc, args);
+	args_eval(argc, args);
 
 	/** CLEANUP **/
 cleanup:
@@ -161,13 +188,23 @@ cleanup:
 		free(var_tmp);
 	}
 
-	if (stdout_redirect == 1)
+	if ((redirect & 1) != 0)
 	{
 		fflush(stdout);
 		dup2(stdout_bak, STDOUT_FILENO);
 		if (stdout == NULL)
 		{
 			perror("Failed to restore stdout");
+			ret_num = 1;
+		}
+	}
+
+	if ((redirect & 2) != 0)
+	{
+		dup2(stdin_bak, STDIN_FILENO);
+		if (stdin == NULL)
+		{
+			perror("Failed to restore stdin");
 			ret_num = 1;
 		}
 	}
