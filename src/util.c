@@ -99,6 +99,7 @@ char * tok_next(char * str, char delim)
 	return start;
 }
 
+
 unsigned split_cmd(char *** args, char * line)
 {
 	char * arg;
@@ -128,6 +129,8 @@ unsigned split_cmd(char *** args, char * line)
 	if (errno != 0)
 	{
 		free(*args);
+		fprintf(stderr, "Error: Quote incomplete");
+
 		return 0;
 	}
 
@@ -142,6 +145,7 @@ realloc_fail:
 	perror("realloc() failed");
 	exit(1);
 }
+
 
 int execute(char ** args)
 {
@@ -190,7 +194,7 @@ void routine_clear (struct routine_s * routine)
 	free(routines->code);
 }
 
-int stdout_set (char * loc, char * mode)
+int stdout_set(char * loc, char * mode)
 {
 	fflush(stdout);
 	if (freopen(loc, mode, stdout) == NULL)
@@ -200,4 +204,127 @@ int stdout_set (char * loc, char * mode)
 	}
 
 	return 0;
+}
+
+
+int var_swap(char *** var_tmp, char ** arg, unsigned var_num, unsigned short routine_argc, char ** routine_args)
+{
+	void * tmp;
+
+	/* Only one char long */
+	if ((*arg)[2] == 0)
+	{
+
+		switch ((*arg)[1])
+		{
+			case '?':
+				var_num++;
+
+				tmp = realloc(*var_tmp, var_num * sizeof (char *));
+				if (tmp == NULL) goto alloc_fail;
+				*var_tmp = tmp;
+
+				asprintf(var_tmp[var_num - 1], "%d", ret_num);
+				if (*var_tmp[var_num - 1] == NULL) goto alloc_fail;
+
+				*arg = *var_tmp[var_num - 1];
+
+				return var_num;
+
+			case '#':
+				var_num++;
+
+				tmp = realloc(*var_tmp, var_num * sizeof (char *));
+				if (tmp == NULL) goto alloc_fail;
+				*var_tmp = tmp;
+
+				asprintf(var_tmp[var_num - 1], "%d", routine_argc);
+				if (*var_tmp[var_num - 1] == NULL) goto alloc_fail;
+
+				*arg = *var_tmp[var_num - 1];
+
+				return var_num;
+		}
+
+		if ((*arg)[1] >= '0' && (*arg)[1] <= '9')
+		{
+			if (routine_argc - 1 < (*arg)[1] - '0')
+			{
+				fprintf
+					(
+						stderr,
+						"Error: $%c (%d) is out of range - argc is %d\n",
+						(*arg)[1],
+						(*arg)[1] - '0',
+						routine_argc
+					);
+				return -1;
+			}
+
+			*arg = routine_args[(*arg)[1] - '0'];
+		}
+
+		return var_num;
+	}
+
+	*arg = getenv(*arg + 1);
+	return 0;
+
+alloc_fail:
+	perror("Allocation failed");
+	free(*var_tmp);
+	return -1;
+}
+
+
+void split_eval(unsigned short argc, char ** args)
+{
+	unsigned i = 0, j = 0;
+	char * routine_tmp;
+	const char * cmd;
+
+	/* Try routines */
+	for (; i < routine_num; i++)
+	{
+		if (strcmp(routines[i].name, args[0]) == 0)
+		{
+			for (j = 0; j < routines[i].code_size; j++)
+			{
+				routine_tmp = strdup(routines[i].code[j]);
+				if (routine_tmp == NULL)
+				{
+					ret_num = errno;
+					perror("String duplication faliure");
+					return;
+				}
+
+				if (line_eval(routine_tmp, argc, args) == -1)
+				{
+					free(routine_tmp);
+					ret_num = 1;
+					return;
+				}
+
+				free(routine_tmp);
+			}
+
+			ret_num = 0;
+			return;
+		}
+	}
+
+	/* Try builtins */
+	for (; i < BUILTINS_NUM; i++)
+	{
+		cmd = builtin_table[i].cmd;
+
+		if ( strcmp(args[0], cmd) == 0 )
+		{
+			ret_num = builtin_table[i].func(argc, args);
+			return;
+		}
+	}
+
+	ret_num = execute(args);
+	return;
 }

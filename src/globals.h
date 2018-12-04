@@ -34,6 +34,8 @@ struct routine_s
 	unsigned code_size;
 };
 
+extern struct builtin_func_s builtin_table[];
+
 /* Builtin Declarations */
 DECL_BUILTIN(cd);
 DECL_BUILTIN(set);
@@ -48,13 +50,17 @@ DECL_BUILTIN(listroutines);
 DECL_BUILTIN(help);
 
 /* Normal function declarations */
-unsigned split_cmd(char *** args, char * line);
-int execute(char ** args);
+unsigned split_cmd (char *** args, char * line);
+int execute (char ** args);
 void routine_clear (struct routine_s * routine);
 int stdout_set (char * loc, char * mode);
+int var_swap (char *** var_tmp, char ** arg, unsigned var_num, unsigned short routine_argc, char ** routine_args);
+char line_eval(char current[], unsigned short routine_argc, char ** routine_args);
+void split_eval(unsigned short argc, char ** args);
 
 /* Variable declarations */
 char path[PATH_MAX];
 struct routine_s * routines;
 unsigned routine_num;
 int stdout_bak;
+int ret_num;
